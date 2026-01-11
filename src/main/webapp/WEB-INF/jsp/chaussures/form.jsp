@@ -1,0 +1,66 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<jsp:include page="../common/header.jsp" />
+
+<body class="h-screen flex overflow-hidden bg-gray-50">
+    <jsp:include page="../common/sidebar.jsp" />
+
+    <div class="flex-1 flex flex-col overflow-hidden transition-all duration-300">
+        <jsp:include page="../common/navbar.jsp" />
+
+        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-6">
+            <div class="container mx-auto max-w-2xl">
+                <div class="mb-8">
+                    <h1 class="text-2xl font-bold text-gray-900 mb-2">${chaussure.id == null ? 'Nouveau' : 'Modifier'} Modèle</h1>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
+                    <form:form action="/chaussures/enregistrer" method="POST" modelAttribute="chaussure" class="space-y-6">
+                        <form:hidden path="id" />
+                        
+                        <div>
+                            <label for="nom" class="block text-sm font-semibold text-gray-700 mb-2">Nom du modèle</label>
+                            <form:input path="nom" id="nom" required="true"
+                                class="w-full px-4 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all"
+                                placeholder="Ex: Air Max 270" />
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label for="marque.id" class="block text-sm font-semibold text-gray-700 mb-2">Marque</label>
+                                <form:select path="marque.id" class="w-full px-4 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all">
+                                    <form:option value="" label="-- Sélectionner --" />
+                                    <form:options items="${marques}" itemValue="id" itemLabel="nom" />
+                                </form:select>
+                            </div>
+                            <div>
+                                <label for="coupe.id" class="block text-sm font-semibold text-gray-700 mb-2">Coupe</label>
+                                <form:select path="coupe.id" class="w-full px-4 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all">
+                                    <form:option value="" label="-- Sélectionner --" />
+                                    <form:options items="${coupes}" itemValue="id" itemLabel="nom" />
+                                </form:select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="prix" class="block text-sm font-semibold text-gray-700 mb-2">Prix de base</label>
+                            <form:input path="prix" type="number" step="0.01" id="prix" required="true"
+                                class="w-full px-4 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all" />
+                        </div>
+
+                        <div class="flex items-center justify-end gap-3 pt-4">
+                            <a href="/chaussures" class="px-6 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors shadow-sm">
+                                Annuler
+                            </a>
+                            <button type="submit" class="px-6 py-2 text-sm font-medium text-white bg-brand-600 rounded-md hover:bg-brand-700 transition-colors shadow-sm ring-1 ring-brand-500">
+                                Enregistrer
+                            </button>
+                        </div>
+                    </form:form>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

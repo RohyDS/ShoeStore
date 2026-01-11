@@ -1,0 +1,104 @@
+GENRE{
+    id
+    nom
+}
+
+MARQUE{
+    id
+    nom
+}
+
+
+COUPE{
+    id
+    nom
+}
+
+CHAUSSURES{
+    id
+    nom
+    idCoupe
+    idMarque
+    Prix
+}
+
+CATEGORIES{
+    id
+    nom
+}
+
+CHAUSSURES_GENRES{
+    idChaussureGenre
+    idChaussure
+    idGenre
+    idCategories
+}
+
+
+COULEUR{
+    id
+    nom
+}
+
+POINTURE{
+    id
+    nom
+    P_EUR
+    P_US
+    P_UK
+}
+
+
+CHAUSSURES_COULEUR_POINTURE{
+    idChaussuresCouleurPointure
+    idChaussureGenre
+    idCouleur
+    idPointure
+    Prix
+}
+
+
+PRIX_CHAUSSURES{
+    idChaussures
+    Prix
+    Date
+}
+
+PRIX_CHAUSSURESDETAILS{
+    idChaussuresCouleurPointure
+    Prix
+    Date
+}
+
+CLIENTS{
+    id
+    nom
+}
+
+
+TYPE_MVTSTOCK{
+    id
+    nom
+}
+
+STOCK{
+    id
+    idChaussuresCouleurPointure
+    idType_mvtstock
+    Quantite
+    Date
+}
+
+COMMANDES{
+    id
+    idClient
+    date
+}
+
+COMMANDES_DETAILS{
+    idCD
+    idCommande
+    idChaussuresCouleurPointure
+    Quantite
+    Prix
+}
