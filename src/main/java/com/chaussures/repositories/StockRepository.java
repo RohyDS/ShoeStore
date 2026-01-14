@@ -9,11 +9,11 @@ import com.chaussures.models.Stock;
 @Repository
 public interface StockRepository extends JpaRepository<Stock, Integer> {
     @Query("SELECT COUNT(v) FROM ChaussuresCouleurPointure v WHERE " +
-           "(SELECT COALESCE(SUM(CASE WHEN s.typeMvtStock.id = 1 THEN s.quantite ELSE -s.quantite END), 0) " +
+           "(SELECT COALESCE(SUM(s.quantite), 0) " +
            "FROM Stock s WHERE s.chaussuresCouleurPointure = v) < 5")
     long countLowStockItems();
 
-    @Query("SELECT COALESCE(SUM(CASE WHEN s.typeMvtStock.id = 1 THEN s.quantite ELSE -s.quantite END), 0) " +
+    @Query("SELECT COALESCE(SUM(s.quantite), 0) " +
            "FROM Stock s WHERE s.chaussuresCouleurPointure.id = :varianteId")
     Integer getStockByVarianteId(Integer varianteId);
 }

@@ -86,7 +86,7 @@
                                 </svg>
                             </span>
                         </div>
-                        <div class="text-2xl font-bold text-gray-900">${totalRevenue} €</div>
+                        <div class="text-2xl font-bold text-gray-900">${totalRevenue} Ar</div>
                         <p class="text-xs text-green-600 mt-1 font-bold">+2.4%</p>
                     </div>
 

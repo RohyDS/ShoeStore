@@ -27,13 +27,6 @@ CATEGORIES{
     nom
 }
 
-CHAUSSURES_GENRES{
-    idChaussureGenre
-    idChaussure
-    idGenre
-    idCategories
-}
-
 
 COULEUR{
     id
@@ -48,6 +41,13 @@ POINTURE{
     P_UK
 }
 
+CHAUSSURES_GENRES{
+    idChaussureGenre
+    idChaussure
+    idGenre
+    idCategories
+    Prix
+}
 
 CHAUSSURES_COULEUR_POINTURE{
     idChaussuresCouleurPointure
@@ -60,6 +60,12 @@ CHAUSSURES_COULEUR_POINTURE{
 
 PRIX_CHAUSSURES{
     idChaussures
+    Prix
+    Date
+}
+
+PRIX_CHAUSSURESGENRESDETAILS{
+    idChaussureGenre
     Prix
     Date
 }

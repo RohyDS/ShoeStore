@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,6 +24,8 @@ import com.chaussures.models.Clients;
 import com.chaussures.models.Commandes;
 import com.chaussures.models.CommandesDetails;
 import com.chaussures.models.PanierItem;
+import com.chaussures.models.Stock;
+import com.chaussures.models.TypeMvtStock;
 import com.chaussures.repositories.StockRepository;
 import com.chaussures.services.CategoriesService;
 import com.chaussures.services.ChaussuresCouleurPointureService;
@@ -32,6 +35,8 @@ import com.chaussures.services.CommandesService;
 import com.chaussures.services.CouleurService;
 import com.chaussures.services.GenreService;
 import com.chaussures.services.PointureService;
+import com.chaussures.services.StockService;
+import com.chaussures.services.TypeMvtStockService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -62,6 +67,12 @@ public class ClientAffichageController {
 
     @Autowired
     private CommandesDetailsService commandesDetailsService;
+
+    @Autowired
+    private StockService stockService;
+
+    @Autowired
+    private TypeMvtStockService typeMvtStockService;
 
     @Autowired
     private StockRepository stockRepository;
@@ -158,6 +169,22 @@ public class ClientAffichageController {
         return "client_affichage/panier";
     }
 
+    @GetMapping("/commandes")
+    public String mesCommandes(HttpSession session, Model model) {
+        Clients loggedInClient = (Clients) session.getAttribute("loggedInClient");
+        if (loggedInClient == null) return "redirect:/clientAffichage/login";
+
+        List<Commandes> commandes = commandesService.findByClientId(loggedInClient.getId());
+        model.addAttribute("commandes", commandes);
+        model.addAttribute("client", loggedInClient);
+        
+        // Récupérer le panier pour le badge
+        List<PanierItem> panier = (List<PanierItem>) session.getAttribute("panier");
+        model.addAttribute("panierCount", panier != null ? panier.stream().mapToInt(PanierItem::getQuantite).sum() : 0);
+        
+        return "client_affichage/commandes";
+    }
+
     @PostMapping("/panier/ajouter")
     public String ajouterAuPanier(@RequestParam Integer varianteId, @RequestParam Integer quantite, HttpSession session) {
         Clients loggedInClient = (Clients) session.getAttribute("loggedInClient");
@@ -203,7 +230,7 @@ public class ClientAffichageController {
                     variante.getCouleur().getNom(),
                     variante.getPointure().getNom(),
                     quantite,
-                    variante.getPrix()
+                    variante.getPrixEffectif()
                 );
                 panier.add(newItem);
             }
@@ -222,6 +249,7 @@ public class ClientAffichageController {
     }
 
     @PostMapping("/panier/valider")
+    @Transactional
     public String validerPanier(HttpSession session) {
         Clients loggedInClient = (Clients) session.getAttribute("loggedInClient");
         List<PanierItem> panier = (List<PanierItem>) session.getAttribute("panier");
@@ -229,22 +257,34 @@ public class ClientAffichageController {
         if (loggedInClient == null) return "redirect:/clientAffichage/login";
         if (panier == null || panier.isEmpty()) return "redirect:/clientAffichage/accueil";
 
+        // Récupérer le type de mouvement "Sortie" (ID 2)
+        TypeMvtStock typeSortie = typeMvtStockService.findById(2).orElse(null);
+
         // Créer la commande
         Commandes commande = new Commandes();
         commande.setClient(loggedInClient);
         commande.setDateCommande(LocalDateTime.now());
         commande = commandesService.save(commande);
 
-        // Créer les détails
+        // Créer les détails et mouvements de stock
         for (PanierItem item : panier) {
             ChaussuresCouleurPointure variante = varianteService.findById(item.getVarianteId()).orElse(null);
             if (variante != null) {
+                // 1. Enregistrer le détail de la commande
                 CommandesDetails detail = new CommandesDetails();
                 detail.setCommande(commande);
                 detail.setChaussuresCouleurPointure(variante);
                 detail.setQuantite(item.getQuantite());
                 detail.setPrix(item.getPrix());
                 commandesDetailsService.save(detail);
+
+                // 2. Enregistrer le mouvement de stock (Sortie)
+                Stock mvtStock = new Stock();
+                mvtStock.setChaussuresCouleurPointure(variante);
+                mvtStock.setTypeMvtStock(typeSortie);
+                mvtStock.setQuantite(-item.getQuantite()); // Quantité négative pour une sortie
+                mvtStock.setDateMvt(LocalDateTime.now());
+                stockService.save(mvtStock);
             }
         }
 

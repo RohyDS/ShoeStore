@@ -1,11 +1,17 @@
 package com.chaussures.controllers;
 
+import java.math.BigDecimal;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.CustomNumberEditor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -41,6 +47,11 @@ public class ChaussuresVariantesController {
 
     @Autowired
     private GenreService genreService;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.registerCustomEditor(BigDecimal.class, new CustomNumberEditor(BigDecimal.class, true));
+    }
 
     @GetMapping
     public String list(
@@ -99,7 +110,14 @@ public class ChaussuresVariantesController {
     }
 
     @PostMapping("/enregistrer")
-    public String save(@ModelAttribute ChaussuresCouleurPointure variante) {
+    public String save(@ModelAttribute("variante") ChaussuresCouleurPointure variante, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            model.addAttribute("activePage", "variantes");
+            model.addAttribute("chaussuresGenres", chaussuresGenresService.findAll());
+            model.addAttribute("couleurs", couleurService.findAll());
+            model.addAttribute("pointures", pointureService.findAll());
+            return "chaussures_variantes/form";
+        }
         service.save(variante);
         return "redirect:/chaussures-variantes";
     }

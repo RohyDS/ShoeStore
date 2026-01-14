@@ -13,4 +13,5 @@ import com.chaussures.models.Commandes;
 public interface CommandesRepository extends JpaRepository<Commandes, Integer> {
     long countByDateCommandeAfter(LocalDateTime date);
     List<Commandes> findAllByOrderByDateCommandeDesc(Pageable pageable);
+    List<Commandes> findByClientIdOrderByDateCommandeDesc(Integer clientId);
 }

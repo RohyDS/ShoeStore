@@ -3,6 +3,7 @@ package com.chaussures.models;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "commandes")
@@ -21,4 +22,7 @@ public class Commandes {
 
     @Column(name = "date_commande")
     private LocalDateTime dateCommande;
+
+    @OneToMany(mappedBy = "commande", cascade = CascadeType.ALL)
+    private List<CommandesDetails> details;
 }

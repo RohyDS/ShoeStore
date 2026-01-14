@@ -65,7 +65,16 @@ CREATE TABLE IF NOT EXISTS chaussures_genres (
     id_chaussure_genre SERIAL PRIMARY KEY,
     id_chaussure INT REFERENCES chaussures(id),
     id_genre INT REFERENCES genre(id),
-    id_categories INT REFERENCES categories(id)
+    id_categories INT REFERENCES categories(id),
+    prix NUMERIC(15, 2)
+);
+
+-- Table PRIX_CHAUSSURESGENRESDETAILS
+CREATE TABLE IF NOT EXISTS prix_chaussuresgenredetails (
+    id_chaussure_genre INT REFERENCES chaussures_genres(id_chaussure_genre),
+    prix NUMERIC(15, 2),
+    date_prix TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id_chaussure_genre, date_prix)
 );
 
 -- Table CHAUSSURES_COULEUR_POINTURE

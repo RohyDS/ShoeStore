@@ -1,9 +1,15 @@
 package com.chaussures.controllers;
 
+import java.math.BigDecimal;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.CustomNumberEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,10 +37,15 @@ public class ChaussuresGenresController {
     @Autowired
     private CategoriesService categoriesService;
 
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.registerCustomEditor(BigDecimal.class, new CustomNumberEditor(BigDecimal.class, true));
+    }
+
     @GetMapping
     public String list(Model model) {
         model.addAttribute("activePage", "chaussuresGenres");
-        model.addAttribute("items", service.findAll());
+        model.addAttribute("associations", service.findAll());
         return "chaussures_genres/liste";
     }
 
@@ -59,7 +70,15 @@ public class ChaussuresGenresController {
     }
 
     @PostMapping("/enregistrer")
-    public String save(@ModelAttribute ChaussuresGenres item) {
+    public String save(@ModelAttribute("item") ChaussuresGenres item, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            model.addAttribute("activePage", "chaussuresGenres");
+            model.addAttribute("chaussures", chaussuresService.findAll());
+            model.addAttribute("genres", genreService.findAll());
+            model.addAttribute("categories", categoriesService.findAll());
+            return "chaussures_genres/form";
+        }
+
         service.save(item);
         return "redirect:/chaussures-genres";
     }

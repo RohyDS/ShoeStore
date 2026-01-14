@@ -38,4 +38,14 @@ public class ChaussuresCouleurPointure {
     private Pointure pointure;
 
     private BigDecimal prix;
+
+    public BigDecimal getPrixEffectif() {
+        if (prix != null) {
+            return prix;
+        }
+        if (chaussureGenre != null) {
+            return chaussureGenre.getPrixEffectif();
+        }
+        return BigDecimal.ZERO;
+    }
 }

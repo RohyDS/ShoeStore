@@ -101,7 +101,16 @@
                                             </span>
                                         </td>
                                         <td class="px-6 py-3 text-gray-500">${v.pointure.nom}</td>
-                                        <td class="px-6 py-3 font-medium text-brand-600">${v.prix} €</td>
+                                        <td class="px-6 py-3 font-medium text-brand-600">
+                                            <c:choose>
+                                                <c:when test="${v.prix != null}">
+                                                    ${v.prix} Ar
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <span class="text-gray-400 text-xs italic">Hérité:</span> ${v.prixEffectif} Ar
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </td>
                                         <td class="px-6 py-3">
                                             <div class="flex items-center gap-3">
                                                 <a href="/chaussures-variantes/modifier/${v.id}" class="text-brand-600 hover:text-brand-700 font-medium">Modifier</a>

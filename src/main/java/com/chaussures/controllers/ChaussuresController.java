@@ -1,9 +1,15 @@
 package com.chaussures.controllers;
 
+import java.math.BigDecimal;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.CustomNumberEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,6 +33,11 @@ public class ChaussuresController {
     @Autowired
     private MarqueService marqueService;
 
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.registerCustomEditor(BigDecimal.class, new CustomNumberEditor(BigDecimal.class, true));
+    }
+
     @GetMapping
     public String list(Model model) {
         model.addAttribute("activePage", "chaussures");
@@ -38,8 +49,8 @@ public class ChaussuresController {
     public String showForm(Model model) {
         model.addAttribute("activePage", "chaussures");
         model.addAttribute("chaussure", new Chaussures());
-        model.addAttribute("coupes", coupeService.findAll());
         model.addAttribute("marques", marqueService.findAll());
+        model.addAttribute("coupes", coupeService.findAll());
         return "chaussures/form";
     }
 
@@ -47,13 +58,19 @@ public class ChaussuresController {
     public String edit(@PathVariable Integer id, Model model) {
         model.addAttribute("activePage", "chaussures");
         model.addAttribute("chaussure", service.findById(id).orElse(new Chaussures()));
-        model.addAttribute("coupes", coupeService.findAll());
         model.addAttribute("marques", marqueService.findAll());
+        model.addAttribute("coupes", coupeService.findAll());
         return "chaussures/form";
     }
 
     @PostMapping("/enregistrer")
-    public String save(@ModelAttribute Chaussures chaussure) {
+    public String save(@ModelAttribute("chaussure") Chaussures chaussure, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            model.addAttribute("activePage", "chaussures");
+            model.addAttribute("marques", marqueService.findAll());
+            model.addAttribute("coupes", coupeService.findAll());
+            return "chaussures/form";
+        }
         service.save(chaussure);
         return "redirect:/chaussures";
     }

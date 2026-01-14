@@ -47,9 +47,12 @@
                         </div>
 
                         <div>
-                            <label for="prix" class="block text-sm font-semibold text-gray-700 mb-2">Prix spécifique</label>
-                            <form:input path="prix" type="number" step="0.01" id="prix" required="true"
-                                class="w-full px-4 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all" />
+                            <label for="prix" class="block text-sm font-semibold text-gray-700 mb-2">Prix spécifique (Ar)</label>
+                            <form:input path="prix" id="prix"
+                                class="w-full px-4 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all" 
+                                placeholder="Laissez vide pour utiliser le prix par défaut" />
+                            <form:errors path="prix" class="text-red-500 text-xs mt-1" />
+                            <p class="mt-1 text-xs text-gray-500">Si vide, le prix de l'association Chaussure/Genre sera utilisé.</p>
                         </div>
 
                         <div class="flex items-center justify-end gap-3 pt-4">

@@ -18,7 +18,7 @@
     <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
-                <div class="flex items-center">
+                <div class="flex items-center gap-8">
                     <a href="/clientAffichage/accueil" class="flex items-center gap-2 group">
                         <div class="bg-indigo-600 p-2 rounded-lg group-hover:bg-indigo-700 transition-colors">
                             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -27,6 +27,10 @@
                         </div>
                         <span class="text-xl font-bold text-gray-900 tracking-tight">Chaussures</span>
                     </a>
+                    <div class="hidden md:flex items-center gap-4">
+                        <a href="/clientAffichage/accueil" class="text-sm font-medium text-gray-500 hover:text-indigo-600 transition-colors">Boutique</a>
+                        <a href="/clientAffichage/commandes" class="text-sm font-medium text-gray-500 hover:text-indigo-600 transition-colors">Mes Commandes</a>
+                    </div>
                 </div>
                 <div class="flex items-center gap-4">
                     <span class="text-sm text-gray-600 font-medium">Bonjour, ${client.nom}</span>
@@ -95,13 +99,13 @@
                                         <div class="text-sm">
                                             <span class="text-gray-500">Prix:</span>
                                             <span class="text-gray-900 font-bold ml-1">
-                                                <fmt:formatNumber value="${item.prix}" type="currency" currencySymbol="$" />
+                                                <fmt:formatNumber value="${item.prix}" type="currency" currencySymbol="Ar" />
                                             </span>
                                             <span class="text-gray-400 mx-2">×</span>
                                             <span class="text-gray-900 font-bold">${item.quantite}</span>
                                         </div>
                                         <div class="text-indigo-600 font-extrabold text-lg">
-                                            <fmt:formatNumber value="${item.total}" type="currency" currencySymbol="$" />
+                                            <fmt:formatNumber value="${item.total}" type="currency" currencySymbol="Ar" />
                                         </div>
                                     </div>
                                 </div>
@@ -117,7 +121,7 @@
                                 <div class="flex justify-between text-gray-600">
                                     <span>Sous-total</span>
                                     <span class="font-medium text-gray-900">
-                                        <fmt:formatNumber value="${total}" type="currency" currencySymbol="$" />
+                                        <fmt:formatNumber value="${total}" type="currency" currencySymbol="Ar" />
                                     </span>
                                 </div>
                                 <div class="flex justify-between text-gray-600">
@@ -127,7 +131,7 @@
                                 <div class="border-t border-gray-100 pt-4 flex justify-between">
                                     <span class="text-lg font-bold text-gray-900">Total</span>
                                     <span class="text-2xl font-black text-indigo-600">
-                                        <fmt:formatNumber value="${total}" type="currency" currencySymbol="$" />
+                                        <fmt:formatNumber value="${total}" type="currency" currencySymbol="Ar" />
                                     </span>
                                 </div>
                             </div>

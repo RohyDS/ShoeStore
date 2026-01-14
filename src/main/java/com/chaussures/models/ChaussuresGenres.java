@@ -1,5 +1,7 @@
 package com.chaussures.models;
 
+import java.math.BigDecimal;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -37,4 +39,16 @@ public class ChaussuresGenres {
     @ManyToOne
     @JoinColumn(name = "id_categories")
     private Categories categories;
+
+    private BigDecimal prix;
+
+    public BigDecimal getPrixEffectif() {
+        if (prix != null) {
+            return prix;
+        }
+        if (chaussure != null && chaussure.getPrix() != null) {
+            return chaussure.getPrix();
+        }
+        return BigDecimal.ZERO;
+    }
 }

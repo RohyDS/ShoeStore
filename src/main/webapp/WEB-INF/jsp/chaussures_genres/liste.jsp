@@ -32,6 +32,7 @@
                                     <th class="px-6 py-3">Modèle</th>
                                     <th class="px-6 py-3">Catégorie</th>
                                     <th class="px-6 py-3">Genre</th>
+                                    <th class="px-6 py-3">Prix</th>
                                     <th class="px-6 py-3 text-right">Actions</th>
                                 </tr>
                             </thead>
@@ -46,6 +47,18 @@
                                             </span>
                                         </td>
                                         <td class="px-6 py-3 text-gray-600">${item.genre.nom}</td>
+                                        <td class="px-6 py-3 font-semibold text-brand-600">
+                                            <c:choose>
+                                                <c:when test="${item.prix != null}">
+                                                    ${item.prix} Ar
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <span class="text-gray-400 italic text-xs" title="Prix hérité du modèle">
+                                                        ${item.getPrixEffectif()} Ar *
+                                                    </span>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </td>
                                         <td class="px-6 py-3 text-right space-x-2">
                                             <a href="/chaussures-genres/modifier/${item.id}" class="text-brand-600 hover:text-brand-900 font-medium">Modifier</a>
                                             <a href="/chaussures-genres/supprimer/${item.id}" 

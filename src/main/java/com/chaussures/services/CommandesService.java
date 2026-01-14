@@ -26,6 +26,10 @@ public class CommandesService {
         return repository.save(commandes);
     }
 
+    public List<Commandes> findByClientId(Integer clientId) {
+        return repository.findByClientIdOrderByDateCommandeDesc(clientId);
+    }
+
     public void deleteById(Integer id) {
         repository.deleteById(id);
     }

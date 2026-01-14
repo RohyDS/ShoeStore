@@ -85,10 +85,10 @@
                                         <td class="px-6 py-4 text-gray-600">T${detail.chaussuresCouleurPointure.pointure.nom}</td>
                                         <td class="px-6 py-4 text-center text-gray-900 font-medium">${detail.quantite}</td>
                                         <td class="px-6 py-4 text-right text-gray-900">
-                                            <fmt:formatNumber value="${detail.prix}" type="currency" currencySymbol="$" />
+                                            <fmt:formatNumber value="${detail.prix}" type="currency" currencySymbol="Ar" />
                                         </td>
                                         <td class="px-6 py-4 text-right font-bold text-brand-600">
-                                            <fmt:formatNumber value="${itemTotal}" type="currency" currencySymbol="$" />
+                                            <fmt:formatNumber value="${itemTotal}" type="currency" currencySymbol="Ar" />
                                         </td>
                                     </tr>
                                 </c:forEach>
@@ -97,7 +97,7 @@
                                 <tr>
                                     <td colspan="6" class="px-6 py-4 text-right font-semibold text-gray-900">Total Commande</td>
                                     <td class="px-6 py-4 text-right font-bold text-xl text-brand-600">
-                                        <fmt:formatNumber value="${grandTotal}" type="currency" currencySymbol="$" />
+                                        <fmt:formatNumber value="${grandTotal}" type="currency" currencySymbol="Ar" />
                                     </td>
                                 </tr>
                             </tfoot>
