@@ -45,7 +45,7 @@ public class ChaussuresGenresController {
     @GetMapping
     public String list(Model model) {
         model.addAttribute("activePage", "chaussuresGenres");
-        model.addAttribute("associations", service.findAll());
+        model.addAttribute("items", service.findAll());
         return "chaussures_genres/liste";
     }
 
