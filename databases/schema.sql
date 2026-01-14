@@ -127,3 +127,11 @@ CREATE TABLE IF NOT EXISTS commandes_details (
     quantite INT NOT NULL,
     prix NUMERIC(15, 2) NOT NULL
 );
+
+-- Table REMISE
+CREATE TABLE IF NOT EXISTS remise (
+    id SERIAL PRIMARY KEY,
+    quantite INT NOT NULL,
+    remise NUMERIC(5, 2) NOT NULL,
+    date_remise TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

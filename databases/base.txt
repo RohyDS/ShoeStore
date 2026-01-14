@@ -108,3 +108,11 @@ COMMANDES_DETAILS{
     Quantite
     Prix
 }
+
+
+REMISE{
+    id
+    Quantite
+    Remise
+    Date
+}

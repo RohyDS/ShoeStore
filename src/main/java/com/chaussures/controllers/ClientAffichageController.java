@@ -35,8 +35,10 @@ import com.chaussures.services.CommandesService;
 import com.chaussures.services.CouleurService;
 import com.chaussures.services.GenreService;
 import com.chaussures.services.PointureService;
+import com.chaussures.services.RemiseService;
 import com.chaussures.services.StockService;
 import com.chaussures.services.TypeMvtStockService;
+import com.chaussures.models.Remise;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -73,6 +75,9 @@ public class ClientAffichageController {
 
     @Autowired
     private TypeMvtStockService typeMvtStockService;
+
+    @Autowired
+    private RemiseService remiseService;
 
     @Autowired
     private StockRepository stockRepository;
@@ -159,12 +164,32 @@ public class ClientAffichageController {
         List<PanierItem> panier = (List<PanierItem>) session.getAttribute("panier");
         if (panier == null) panier = new ArrayList<>();
 
+        // Calculer la quantité totale pour la remise globale
+        int totalQuantite = panier.stream().mapToInt(PanierItem::getQuantite).sum();
+        
+        // Trouver la remise applicable sur le total
+        final Double remisePourcentage = remiseService.findApplicableRemise(totalQuantite)
+                .map(Remise::getRemise)
+                .orElse(null);
+
+        // Appliquer la remise à chaque item
+        for (PanierItem item : panier) {
+            item.setRemisePourcentage(remisePourcentage);
+            if (remisePourcentage != null) {
+                BigDecimal reduction = item.getPrixUnitaire().multiply(new BigDecimal(remisePourcentage / 100.0));
+                item.setPrixRemise(item.getPrixUnitaire().subtract(reduction));
+            } else {
+                item.setPrixRemise(null);
+            }
+        }
+
         BigDecimal total = panier.stream()
                 .map(PanierItem::getTotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         model.addAttribute("panier", panier);
         model.addAttribute("total", total);
+        model.addAttribute("remiseGlobale", remisePourcentage);
         model.addAttribute("client", loggedInClient);
         return "client_affichage/panier";
     }
@@ -222,21 +247,45 @@ public class ClientAffichageController {
             }
 
             if (!found) {
-                PanierItem newItem = new PanierItem(
-                    varianteId,
-                    variante.getChaussureGenre().getChaussure().getNom(),
-                    variante.getChaussureGenre().getCategories().getNom(),
-                    variante.getChaussureGenre().getGenre().getNom(),
-                    variante.getCouleur().getNom(),
-                    variante.getPointure().getNom(),
-                    quantite,
-                    variante.getPrixEffectif()
-                );
+                PanierItem newItem = new PanierItem();
+                newItem.setVarianteId(varianteId);
+                newItem.setNom(variante.getChaussureGenre().getChaussure().getNom());
+                newItem.setCategorie(variante.getChaussureGenre().getCategories().getNom());
+                newItem.setGenre(variante.getChaussureGenre().getGenre().getNom());
+                newItem.setCouleur(variante.getCouleur().getNom());
+                newItem.setPointure(variante.getPointure().getNom());
+                newItem.setQuantite(quantite);
+                newItem.setPrixUnitaire(variante.getPrixEffectif());
+                
                 panier.add(newItem);
             }
+            
+            // Recalculer les remises pour tout le panier car la quantité totale a changé
+            updateAllRemises(panier);
+            
             return "redirect:/clientAffichage/accueil?added=true";
         }
         return "redirect:/clientAffichage/accueil?error=true";
+    }
+
+    private void updateAllRemises(List<PanierItem> panier) {
+        if (panier == null || panier.isEmpty()) return;
+        
+        int totalQuantite = panier.stream().mapToInt(PanierItem::getQuantite).sum();
+        
+        final Double remisePourcentage = remiseService.findApplicableRemise(totalQuantite)
+                .map(Remise::getRemise)
+                .orElse(null);
+
+        for (PanierItem item : panier) {
+            item.setRemisePourcentage(remisePourcentage);
+            if (remisePourcentage != null) {
+                BigDecimal reduction = item.getPrixUnitaire().multiply(new BigDecimal(remisePourcentage / 100.0));
+                item.setPrixRemise(item.getPrixUnitaire().subtract(reduction));
+            } else {
+                item.setPrixRemise(null);
+            }
+        }
     }
 
     @GetMapping("/panier/supprimer/{varianteId}")
@@ -244,6 +293,8 @@ public class ClientAffichageController {
         List<PanierItem> panier = (List<PanierItem>) session.getAttribute("panier");
         if (panier != null) {
             panier.removeIf(item -> item.getVarianteId().equals(varianteId));
+            // Recalculer les remises après suppression
+            updateAllRemises(panier);
         }
         return "redirect:/clientAffichage/panier";
     }
@@ -275,7 +326,7 @@ public class ClientAffichageController {
                 detail.setCommande(commande);
                 detail.setChaussuresCouleurPointure(variante);
                 detail.setQuantite(item.getQuantite());
-                detail.setPrix(item.getPrix());
+                detail.setPrix(item.getPrixRemise() != null ? item.getPrixRemise() : item.getPrixUnitaire());
                 commandesDetailsService.save(detail);
 
                 // 2. Enregistrer le mouvement de stock (Sortie)

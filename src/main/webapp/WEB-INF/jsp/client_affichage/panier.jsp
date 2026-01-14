@@ -98,9 +98,22 @@
                                     <div class="flex justify-between items-end">
                                         <div class="text-sm">
                                             <span class="text-gray-500">Prix:</span>
-                                            <span class="text-gray-900 font-bold ml-1">
-                                                <fmt:formatNumber value="${item.prix}" type="currency" currencySymbol="Ar" />
-                                            </span>
+                                            <c:if test="${item.remisePourcentage != null}">
+                                                <span class="text-gray-400 line-through ml-1 text-xs">
+                                                    <fmt:formatNumber value="${item.prixUnitaire}" type="currency" currencySymbol="Ar" />
+                                                </span>
+                                                <span class="text-indigo-600 font-bold ml-1">
+                                                    <fmt:formatNumber value="${item.prixRemise}" type="currency" currencySymbol="Ar" />
+                                                </span>
+                                                <span class="ml-1 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
+                                                    -${item.remisePourcentage}%
+                                                </span>
+                                            </c:if>
+                                            <c:if test="${item.remisePourcentage == null}">
+                                                <span class="text-gray-900 font-bold ml-1">
+                                                    <fmt:formatNumber value="${item.prixUnitaire}" type="currency" currencySymbol="Ar" />
+                                                </span>
+                                            </c:if>
                                             <span class="text-gray-400 mx-2">×</span>
                                             <span class="text-gray-900 font-bold">${item.quantite}</span>
                                         </div>
@@ -118,12 +131,38 @@
                         <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 sticky top-24">
                             <h2 class="text-xl font-bold text-gray-900 mb-6 border-b border-gray-100 pb-4">Résumé</h2>
                             <div class="space-y-4 mb-6">
+                                <c:if test="${remiseGlobale != null}">
+                                    <div class="bg-indigo-50 border border-indigo-100 rounded-lg p-3 mb-2">
+                                        <div class="flex items-center text-xs">
+                                            <svg class="h-4 w-4 text-indigo-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
+                                            </svg>
+                                            <span class="text-indigo-800 font-medium">Remise globale de ${remiseGlobale}% appliquée !</span>
+                                        </div>
+                                    </div>
+                                </c:if>
                                 <div class="flex justify-between text-gray-600">
                                     <span>Sous-total</span>
                                     <span class="font-medium text-gray-900">
-                                        <fmt:formatNumber value="${total}" type="currency" currencySymbol="Ar" />
+                                        <c:set var="sousTotal" value="0" />
+                                        <c:forEach items="${panier}" var="item">
+                                            <c:set var="sousTotal" value="${sousTotal + (item.prixUnitaire * item.quantite)}" />
+                                        </c:forEach>
+                                        <fmt:formatNumber value="${sousTotal}" type="currency" currencySymbol="Ar" />
                                     </span>
                                 </div>
+                                <c:set var="economieTotale" value="0" />
+                                <c:forEach items="${panier}" var="item">
+                                    <c:set var="economieTotale" value="${economieTotale + item.economie}" />
+                                </c:forEach>
+                                <c:if test="${economieTotale > 0}">
+                                    <div class="flex justify-between text-green-600">
+                                        <span>Économie</span>
+                                        <span class="font-medium">
+                                            -<fmt:formatNumber value="${economieTotale}" type="currency" currencySymbol="Ar" />
+                                        </span>
+                                    </div>
+                                </c:if>
                                 <div class="flex justify-between text-gray-600">
                                     <span>Livraison</span>
                                     <span class="font-medium text-green-600">Gratuite</span>

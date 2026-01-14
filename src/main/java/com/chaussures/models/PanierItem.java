@@ -17,9 +17,16 @@ public class PanierItem {
     private String couleur;
     private String pointure;
     private Integer quantite;
-    private BigDecimal prix;
+    private BigDecimal prixUnitaire;
+    private Double remisePourcentage;
+    private BigDecimal prixRemise;
 
     public BigDecimal getTotal() {
-        return prix.multiply(new BigDecimal(quantite));
+        return (prixRemise != null ? prixRemise : prixUnitaire).multiply(new BigDecimal(quantite));
+    }
+
+    public BigDecimal getEconomie() {
+        if (prixRemise == null) return BigDecimal.ZERO;
+        return prixUnitaire.subtract(prixRemise).multiply(new BigDecimal(quantite));
     }
 }

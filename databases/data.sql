@@ -94,6 +94,12 @@ INSERT INTO chaussures_couleur_pointure (id_chaussure_genre, id_couleur, id_poin
 (4, 4, 2, 85000.00),
 (5, 5, 4, 130000.00);
 
+-- Insertion dans REMISE
+INSERT INTO remise (quantite, remise) VALUES 
+(5, 5.0),
+(10, 10.0),
+(20, 15.0);
+
 -- Insertion dans PRIX_CHAUSSURES (Historique des prix globaux)
 INSERT INTO prix_chaussures (id_chaussures, prix, date_prix) VALUES 
 (1, 140000.00, '2025-12-01 10:00:00'),
