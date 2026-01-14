@@ -18,11 +18,18 @@ public class PanierItem {
     private String pointure;
     private Integer quantite;
     private BigDecimal prixUnitaire;
-    private Double remisePourcentage;
-    private BigDecimal prixRemise;
+    private Double remisePourcentage; // Remise effective (la meilleure entre ligne et globale)
+    private BigDecimal prixRemise;    // Prix après remise effective
+    private Double remiseLignePourcentage; // Remise basée uniquement sur la quantité de cet article
 
     public BigDecimal getTotal() {
         return (prixRemise != null ? prixRemise : prixUnitaire).multiply(new BigDecimal(quantite));
+    }
+
+    public BigDecimal getPrixLigneRemise() {
+        if (remiseLignePourcentage == null) return prixUnitaire;
+        BigDecimal reduction = prixUnitaire.multiply(new BigDecimal(remiseLignePourcentage / 100.0));
+        return prixUnitaire.subtract(reduction);
     }
 
     public BigDecimal getEconomie() {

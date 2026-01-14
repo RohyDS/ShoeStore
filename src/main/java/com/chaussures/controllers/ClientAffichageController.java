@@ -168,20 +168,12 @@ public class ClientAffichageController {
         int totalQuantite = panier.stream().mapToInt(PanierItem::getQuantite).sum();
         
         // Trouver la remise applicable sur le total
-        final Double remisePourcentage = remiseService.findApplicableRemise(totalQuantite)
+        final Double remiseGlobale = remiseService.findApplicableRemise(totalQuantite)
                 .map(Remise::getRemise)
                 .orElse(null);
 
-        // Appliquer la remise à chaque item
-        for (PanierItem item : panier) {
-            item.setRemisePourcentage(remisePourcentage);
-            if (remisePourcentage != null) {
-                BigDecimal reduction = item.getPrixUnitaire().multiply(new BigDecimal(remisePourcentage / 100.0));
-                item.setPrixRemise(item.getPrixUnitaire().subtract(reduction));
-            } else {
-                item.setPrixRemise(null);
-            }
-        }
+        // Appliquer la remise à chaque item (en distinguant remise ligne et remise globale)
+        updateAllRemises(panier);
 
         BigDecimal total = panier.stream()
                 .map(PanierItem::getTotal)
@@ -189,7 +181,7 @@ public class ClientAffichageController {
 
         model.addAttribute("panier", panier);
         model.addAttribute("total", total);
-        model.addAttribute("remiseGlobale", remisePourcentage);
+        model.addAttribute("remiseGlobale", (remiseGlobale != null && remiseGlobale > 0) ? remiseGlobale : null);
         model.addAttribute("client", loggedInClient);
         return "client_affichage/panier";
     }
@@ -273,16 +265,28 @@ public class ClientAffichageController {
         
         int totalQuantite = panier.stream().mapToInt(PanierItem::getQuantite).sum();
         
-        final Double remisePourcentage = remiseService.findApplicableRemise(totalQuantite)
+        // 1. Calculer la remise globale (basée sur la quantité totale)
+        final Double remiseGlobale = remiseService.findApplicableRemise(totalQuantite)
                 .map(Remise::getRemise)
-                .orElse(null);
+                .orElse(0.0);
 
         for (PanierItem item : panier) {
-            item.setRemisePourcentage(remisePourcentage);
-            if (remisePourcentage != null) {
-                BigDecimal reduction = item.getPrixUnitaire().multiply(new BigDecimal(remisePourcentage / 100.0));
+            // 2. Calculer la remise propre à la ligne (basée sur la quantité de l'article)
+            Double remiseLigne = remiseService.findApplicableRemise(item.getQuantite())
+                    .map(Remise::getRemise)
+                    .orElse(null);
+            
+            item.setRemiseLignePourcentage(remiseLigne);
+            
+            // 3. Déterminer la remise effective (la meilleure entre la ligne et la globale)
+            Double effectiveRemise = Math.max(remiseLigne != null ? remiseLigne : 0.0, remiseGlobale);
+            
+            if (effectiveRemise > 0) {
+                item.setRemisePourcentage(effectiveRemise);
+                BigDecimal reduction = item.getPrixUnitaire().multiply(new BigDecimal(effectiveRemise / 100.0));
                 item.setPrixRemise(item.getPrixUnitaire().subtract(reduction));
             } else {
+                item.setRemisePourcentage(null);
                 item.setPrixRemise(null);
             }
         }

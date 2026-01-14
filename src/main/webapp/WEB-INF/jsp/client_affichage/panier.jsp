@@ -98,18 +98,18 @@
                                     <div class="flex justify-between items-end">
                                         <div class="text-sm">
                                             <span class="text-gray-500">Prix:</span>
-                                            <c:if test="${item.remisePourcentage != null}">
+                                            <c:if test="${item.remiseLignePourcentage != null}">
                                                 <span class="text-gray-400 line-through ml-1 text-xs">
                                                     <fmt:formatNumber value="${item.prixUnitaire}" type="currency" currencySymbol="Ar" />
                                                 </span>
                                                 <span class="text-indigo-600 font-bold ml-1">
-                                                    <fmt:formatNumber value="${item.prixRemise}" type="currency" currencySymbol="Ar" />
+                                                    <fmt:formatNumber value="${item.prixLigneRemise}" type="currency" currencySymbol="Ar" />
                                                 </span>
-                                                <span class="ml-1 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
-                                                    -${item.remisePourcentage}%
+                                                <span class="ml-1 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                                                    -${item.remiseLignePourcentage}%
                                                 </span>
                                             </c:if>
-                                            <c:if test="${item.remisePourcentage == null}">
+                                            <c:if test="${item.remiseLignePourcentage == null}">
                                                 <span class="text-gray-900 font-bold ml-1">
                                                     <fmt:formatNumber value="${item.prixUnitaire}" type="currency" currencySymbol="Ar" />
                                                 </span>
