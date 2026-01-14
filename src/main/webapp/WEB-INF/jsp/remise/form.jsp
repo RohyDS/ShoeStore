@@ -16,19 +16,20 @@
                 </div>
 
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
-                    <form:form action="/remise/enregistrer" method="POST" modelAttribute="remise" class="space-y-6">
-                        <form:hidden path="id" />
+                    <form action="/remise/enregistrer" method="POST" class="space-y-6">
+                        <input type="hidden" name="id" value="${remise.id}" />
                         
                         <div>
                             <label for="quantite" class="block text-sm font-semibold text-gray-700 mb-2">Quantité Minimale</label>
-                            <form:input path="quantite" type="number" id="quantite" required="true"
+                            <input name="quantite" type="number" id="quantite" required="true" value="${remise.quantite}"
                                 class="w-full px-4 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all"
                                 placeholder="Ex: 10" />
                         </div>
 
+
                         <div>
                             <label for="remise" class="block text-sm font-semibold text-gray-700 mb-2">Remise (%)</label>
-                            <form:input path="remise" type="number" step="0.01" id="remise" required="true"
+                            <input name="remise" type="number" step="0.01" id="remise" required="true" value="${remise.remise}"
                                 class="w-full px-4 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all"
                                 placeholder="Ex: 5.0" />
                         </div>
@@ -41,7 +42,7 @@
                                 Enregistrer
                             </button>
                         </div>
-                    </form:form>
+                    </form>
                 </div>
             </div>
         </main>

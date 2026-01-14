@@ -34,8 +34,14 @@ public class RemiseController {
     }
 
     @PostMapping("/enregistrer")
-    public String save(@ModelAttribute Remise remise) {
-        service.save(remise);
+    public String save(@RequestParam(required = false) Integer id, 
+                       @RequestParam Integer quantite, 
+                       @RequestParam Double remise) {
+        Remise r = new Remise();
+        if (id != null) r.setId(id);
+        r.setQuantite(quantite);
+        r.setRemise(remise);
+        service.save(r);
         return "redirect:/remise";
     }
 
