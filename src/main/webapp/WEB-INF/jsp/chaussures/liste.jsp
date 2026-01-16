@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <jsp:include page="../common/header.jsp" />
 
 <body class="h-screen flex overflow-hidden bg-gray-50">
@@ -42,7 +43,7 @@
                                         <td class="px-6 py-3 text-gray-900 font-medium">${c.nom}</td>
                                         <td class="px-6 py-3 text-gray-500">${c.marque.nom}</td>
                                         <td class="px-6 py-3 text-gray-500">${c.coupe.nom}</td>
-                                        <td class="px-6 py-3 font-medium text-gray-900">${c.prix} Ar</td>
+                                        <td class="px-6 py-3 font-medium text-gray-900"><fmt:formatNumber value="${c.prix}" pattern="#,##0.00" /> Ar</td>
                                         <td class="px-6 py-3">
                                             <div class="flex items-center gap-3">
                                                 <a href="/chaussures/modifier/${c.id}" class="text-brand-600 hover:text-brand-700 font-medium">Modifier</a>

@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <jsp:include page="../common/header.jsp" />
 
 <body class="h-screen flex overflow-hidden bg-gray-50">
@@ -50,11 +51,11 @@
                                         <td class="px-6 py-3 font-semibold text-brand-600">
                                             <c:choose>
                                                 <c:when test="${item.prix != null}">
-                                                    ${item.prix} Ar
+                                                    <fmt:formatNumber value="${item.prix}" pattern="#,##0.00" /> Ar
                                                 </c:when>
                                                 <c:otherwise>
                                                     <span class="text-gray-400 italic text-xs" title="Prix hérité du modèle">
-                                                        ${item.getPrixEffectif()} Ar *
+                                                        <fmt:formatNumber value="${item.getPrixEffectif()}" pattern="#,##0.00" /> Ar *
                                                     </span>
                                                 </c:otherwise>
                                             </c:choose>

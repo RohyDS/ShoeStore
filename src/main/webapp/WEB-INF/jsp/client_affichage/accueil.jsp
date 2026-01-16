@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -203,7 +204,9 @@
 
                         <div class="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between gap-4">
                             <div class="flex flex-col">
-                                <div class="text-2xl font-black text-brand-600">${v.prixEffectif} Ar</div>
+                                <div class="text-2xl font-black text-brand-600">
+                                    <fmt:formatNumber value="${v.prixEffectif}" pattern="#,##0.00" /> Ar
+                                </div>
                                 <div class="text-xs font-medium ${stocks[v.id] > 0 ? 'text-green-600' : 'text-red-600'}">
                                     Stock: ${stocks[v.id]} disponible
                                 </div>
