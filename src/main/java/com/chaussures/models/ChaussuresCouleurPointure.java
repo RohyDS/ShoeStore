@@ -40,12 +40,19 @@ public class ChaussuresCouleurPointure {
     private BigDecimal prix;
 
     public BigDecimal getPrixEffectif() {
+        BigDecimal basePrix = BigDecimal.ZERO;
         if (prix != null) {
-            return prix;
+            basePrix = prix;
+        } else if (chaussureGenre != null) {
+            basePrix = chaussureGenre.getPrixEffectif();
         }
-        if (chaussureGenre != null) {
-            return chaussureGenre.getPrixEffectif();
+
+        // Appliquer la majoration par couleur si elle existe
+        if (couleur != null && couleur.getMajorationPourcentage() != null && couleur.getMajorationPourcentage() > 0) {
+            BigDecimal majoration = basePrix.multiply(new BigDecimal(couleur.getMajorationPourcentage() / 100.0));
+            return basePrix.add(majoration);
         }
-        return BigDecimal.ZERO;
+
+        return basePrix;
     }
 }

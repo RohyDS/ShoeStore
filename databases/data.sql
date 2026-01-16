@@ -18,13 +18,13 @@ INSERT INTO coupe (nom) VALUES
 ('Moyenne');
 
 -- Insertion dans COULEUR
-INSERT INTO couleur (nom) VALUES 
-('Noir'), 
-('Blanc'), 
-('Bleu'), 
-('Rouge'), 
-('Gris'), 
-('Vert');
+INSERT INTO couleur (nom, majoration_pourcentage) VALUES 
+('Noir', 0), 
+('Blanc', 0), 
+('Bleu', 0), 
+('Rouge', 0), 
+('Gris', 0), 
+('Vert', 0);
 
 -- Insertion dans POINTURE
 INSERT INTO pointure (nom, p_eur, p_us, p_uk) VALUES 

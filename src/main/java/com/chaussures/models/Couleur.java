@@ -16,4 +16,7 @@ public class Couleur {
 
     @Column(nullable = false, length = 100)
     private String nom;
+
+    @Column(name = "majoration_pourcentage")
+    private Double majorationPourcentage;
 }

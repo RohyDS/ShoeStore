@@ -27,7 +27,8 @@ CREATE TABLE IF NOT EXISTS categories (
 -- Table COULEUR
 CREATE TABLE IF NOT EXISTS couleur (
     id SERIAL PRIMARY KEY,
-    nom VARCHAR(100) NOT NULL
+    nom VARCHAR(100) NOT NULL,
+    majoration_pourcentage NUMERIC(5, 2) DEFAULT 0
 );
 
 -- Table POINTURE
@@ -135,3 +136,7 @@ CREATE TABLE IF NOT EXISTS remise (
     remise NUMERIC(5, 2) NOT NULL,
     date_remise TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+
+-- Dans schema.sql
+ALTER TABLE couleur ADD COLUMN majoration_pourcentage NUMERIC(5, 2) DEFAULT 0;

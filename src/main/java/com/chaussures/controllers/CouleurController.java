@@ -16,27 +16,21 @@ public class CouleurController {
     public String list(Model model) {
         model.addAttribute("activePage", "couleur");
         model.addAttribute("items", service.findAll());
-        model.addAttribute("title", "Couleurs");
-        model.addAttribute("basePath", "couleur");
-        return "common/crud_list";
+        return "couleur/liste";
     }
 
     @GetMapping("/nouveau")
     public String showForm(Model model) {
         model.addAttribute("activePage", "couleur");
         model.addAttribute("item", new Couleur());
-        model.addAttribute("title", "Nouvelle Couleur");
-        model.addAttribute("basePath", "couleur");
-        return "common/crud_form";
+        return "couleur/form";
     }
 
     @GetMapping("/modifier/{id}")
     public String edit(@PathVariable Integer id, Model model) {
         model.addAttribute("activePage", "couleur");
         model.addAttribute("item", service.findById(id).orElse(new Couleur()));
-        model.addAttribute("title", "Modifier Couleur");
-        model.addAttribute("basePath", "couleur");
-        return "common/crud_form";
+        return "couleur/form";
     }
 
     @PostMapping("/enregistrer")
