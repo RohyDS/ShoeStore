@@ -100,10 +100,10 @@
                                             <span class="text-gray-500">Prix:</span>
                                             <c:if test="${item.remiseLignePourcentage != null}">
                                                 <span class="text-gray-400 line-through ml-1 text-xs">
-                                                    <fmt:formatNumber value="${item.prixUnitaire}" type="currency" currencySymbol="Ar" />
+                                                    <fmt:formatNumber value="${item.prixUnitaire}" pattern="#,##0.00" /> Ar
                                                 </span>
                                                 <span class="text-indigo-600 font-bold ml-1">
-                                                    <fmt:formatNumber value="${item.prixLigneRemise}" type="currency" currencySymbol="Ar" />
+                                                    <fmt:formatNumber value="${item.prixLigneRemise}" pattern="#,##0.00" /> Ar
                                                 </span>
                                                 <span class="ml-1 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
                                                     -${item.remiseLignePourcentage}%
@@ -111,14 +111,14 @@
                                             </c:if>
                                             <c:if test="${item.remiseLignePourcentage == null}">
                                                 <span class="text-gray-900 font-bold ml-1">
-                                                    <fmt:formatNumber value="${item.prixUnitaire}" type="currency" currencySymbol="Ar" />
+                                                    <fmt:formatNumber value="${item.prixUnitaire}" pattern="#,##0.00" /> Ar
                                                 </span>
                                             </c:if>
                                             <span class="text-gray-400 mx-2">×</span>
                                             <span class="text-gray-900 font-bold">${item.quantite}</span>
                                         </div>
                                         <div class="text-indigo-600 font-extrabold text-lg">
-                                            <fmt:formatNumber value="${item.total}" type="currency" currencySymbol="Ar" />
+                                            <fmt:formatNumber value="${item.total}" pattern="#,##0.00" /> Ar
                                         </div>
                                     </div>
                                 </div>
@@ -148,7 +148,7 @@
                                         <c:forEach items="${panier}" var="item">
                                             <c:set var="sousTotal" value="${sousTotal + (item.prixUnitaire * item.quantite)}" />
                                         </c:forEach>
-                                        <fmt:formatNumber value="${sousTotal}" type="currency" currencySymbol="Ar" />
+                                        <fmt:formatNumber value="${sousTotal}" pattern="#,##0.00" /> Ar
                                     </span>
                                 </div>
                                 <c:set var="economieTotale" value="0" />
@@ -159,7 +159,7 @@
                                     <div class="flex justify-between text-green-600">
                                         <span>Économie</span>
                                         <span class="font-medium">
-                                            -<fmt:formatNumber value="${economieTotale}" type="currency" currencySymbol="Ar" />
+                                            -<fmt:formatNumber value="${economieTotale}" pattern="#,##0.00" /> Ar
                                         </span>
                                     </div>
                                 </c:if>
@@ -170,7 +170,7 @@
                                 <div class="border-t border-gray-100 pt-4 flex justify-between">
                                     <span class="text-lg font-bold text-gray-900">Total</span>
                                     <span class="text-2xl font-black text-indigo-600">
-                                        <fmt:formatNumber value="${total}" type="currency" currencySymbol="Ar" />
+                                        <fmt:formatNumber value="${total}" pattern="#,##0.00" /> Ar
                                     </span>
                                 </div>
                             </div>

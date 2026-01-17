@@ -1,4 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <jsp:include page="common/header.jsp" />
 
 <body class="h-screen flex overflow-hidden bg-gray-50">
@@ -86,7 +88,7 @@
                                 </svg>
                             </span>
                         </div>
-                        <div class="text-2xl font-bold text-gray-900">${totalRevenue} Ar</div>
+                        <div class="text-2xl font-bold text-gray-900"><fmt:formatNumber value="${totalRevenue}" pattern="#,##0.00" /> Ar</div>
                         <p class="text-xs text-green-600 mt-1 font-bold">+2.4%</p>
                     </div>
 
