@@ -8,8 +8,10 @@ G:\ITU\S5\Rohy\ShoeStore\src\main\java\com\chaussures\controllers\ClientsControl
 G:\ITU\S5\Rohy\ShoeStore\src\main\java\com\chaussures\controllers\CommandesController.java
 G:\ITU\S5\Rohy\ShoeStore\src\main\java\com\chaussures\controllers\CouleurController.java
 G:\ITU\S5\Rohy\ShoeStore\src\main\java\com\chaussures\controllers\CoupeController.java
+G:\ITU\S5\Rohy\ShoeStore\src\main\java\com\chaussures\controllers\FraisLivraisonController.java
 G:\ITU\S5\Rohy\ShoeStore\src\main\java\com\chaussures\controllers\GenreController.java
 G:\ITU\S5\Rohy\ShoeStore\src\main\java\com\chaussures\controllers\HomeController.java
+G:\ITU\S5\Rohy\ShoeStore\src\main\java\com\chaussures\controllers\LieuController.java
 G:\ITU\S5\Rohy\ShoeStore\src\main\java\com\chaussures\controllers\MarqueController.java
 G:\ITU\S5\Rohy\ShoeStore\src\main\java\com\chaussures\controllers\PointureController.java
 G:\ITU\S5\Rohy\ShoeStore\src\main\java\com\chaussures\controllers\RemiseController.java

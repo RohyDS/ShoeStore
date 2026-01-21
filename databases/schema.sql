@@ -154,5 +154,3 @@ CREATE TABLE IF NOT EXISTS frais_livraison (
 -- Modification table COMMANDES
 ALTER TABLE commandes ADD COLUMN id_lieu INT REFERENCES lieu(id);
 
--- Dans schema.sql
-ALTER TABLE couleur ADD COLUMN majoration_pourcentage NUMERIC(5, 2) DEFAULT 0;
