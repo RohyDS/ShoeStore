@@ -140,9 +140,9 @@
                                                     </div>
                                                     <div class="text-right">
                                                         <p class="text-sm font-bold text-gray-900">
-                                                            <fmt:formatNumber value="${detail.prix * detail.quantite}" type="currency" currencySymbol="Ar" />
+                                                            <fmt:formatNumber value="${detail.prix * detail.quantite}" pattern="#,##0.00" /> Ar
                                                         </p>
-                                                        <p class="text-xs text-gray-500">${detail.quantite} x <fmt:formatNumber value="${detail.prix}" type="currency" currencySymbol="Ar" /></p>
+                                                        <p class="text-xs text-gray-500">${detail.quantite} x <fmt:formatNumber value="${detail.prix}" pattern="#,##0.00" /> Ar</p>
                                                     </div>
                                                 </div>
                                             </div>
