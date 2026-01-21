@@ -113,3 +113,17 @@ INSERT INTO prix_chaussuresdetails (id_chaussures_couleur_pointure, prix, date_p
 (1, 150000.00, CURRENT_TIMESTAMP),
 (3, 90000.00, '2025-12-01 10:00:00'),
 (3, 100000.00, CURRENT_TIMESTAMP);
+
+-- Insertion dans LIEU
+INSERT INTO lieu (nom) VALUES 
+('Analamahitsy'),
+('Ivandry'),
+('Talatamaty'),
+('Analakely');
+
+-- Insertion dans FRAIS_LIVRAISON
+INSERT INTO frais_livraison (id_lieu, montant, date_frais) VALUES 
+(1, 2000.00, CURRENT_TIMESTAMP),
+(2, 3000.00, CURRENT_TIMESTAMP),
+(3, 5000.00, CURRENT_TIMESTAMP),
+(4, 1500.00, CURRENT_TIMESTAMP);

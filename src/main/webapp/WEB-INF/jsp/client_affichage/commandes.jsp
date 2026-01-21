@@ -90,19 +90,29 @@
                                         </p>
                                     </div>
                                     <div>
+                                        <p class="text-xs text-gray-500 uppercase font-bold tracking-wider">Lieu</p>
+                                        <p class="text-sm font-semibold text-gray-900">
+                                            <c:out value="${commande.lieu != null ? commande.lieu.nom : 'Non spécifié'}" />
+                                        </p>
+                                    </div>
+                                    <div>
                                         <p class="text-xs text-gray-500 uppercase font-bold tracking-wider">Commande N°</p>
                                         <p class="text-sm font-semibold text-gray-900">#CMD-${commande.id}</p>
                                     </div>
                                 </div>
                                 <div class="text-right">
-                                    <p class="text-xs text-gray-500 uppercase font-bold tracking-wider">Total</p>
+                                    <p class="text-xs text-gray-500 uppercase font-bold tracking-wider">Total (avec livraison)</p>
                                     <c:set var="totalCommande" value="0" />
                                     <c:forEach items="${commande.details}" var="d">
                                         <c:set var="totalCommande" value="${totalCommande + (d.prix * d.quantite)}" />
                                     </c:forEach>
+                                    <c:set var="frais" value="${commande.lieu != null ? fraisMap[commande.lieu.id] : 0}" />
                                     <p class="text-lg font-black text-indigo-600">
-                                        <fmt:formatNumber value="${totalCommande}" type="currency" currencySymbol="Ar" />
+                                        <fmt:formatNumber value="${totalCommande + frais}" pattern="#,##0.00" /> Ar
                                     </p>
+                                    <c:if test="${frais > 0}">
+                                        <p class="text-[10px] text-gray-400">Inclut <fmt:formatNumber value="${frais}" pattern="#,##0.00" /> Ar de frais</p>
+                                    </c:if>
                                 </div>
                             </div>
 

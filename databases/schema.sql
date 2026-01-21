@@ -137,6 +137,22 @@ CREATE TABLE IF NOT EXISTS remise (
     date_remise TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Table LIEU
+CREATE TABLE IF NOT EXISTS lieu (
+    id SERIAL PRIMARY KEY,
+    nom VARCHAR(100) NOT NULL
+);
+
+-- Table FRAIS_LIVRAISON
+CREATE TABLE IF NOT EXISTS frais_livraison (
+    id_lieu INT REFERENCES lieu(id),
+    montant NUMERIC(15, 2) NOT NULL,
+    date_frais TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id_lieu, date_frais)
+);
+
+-- Modification table COMMANDES
+ALTER TABLE commandes ADD COLUMN id_lieu INT REFERENCES lieu(id);
 
 -- Dans schema.sql
 ALTER TABLE couleur ADD COLUMN majoration_pourcentage NUMERIC(5, 2) DEFAULT 0;

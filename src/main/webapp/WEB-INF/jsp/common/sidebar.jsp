@@ -129,6 +129,20 @@
             <span class="w-5 text-center text-xs font-bold <%= "remise".equals(activePage) ? "text-brand-500" : "text-gray-400 group-hover:text-gray-500" %>">%</span>
             Remises
         </a>
+
+        <div class="px-3 mt-6 mb-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+            Livraison
+        </div>
+
+        <a href="/lieu" class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md group transition-all duration-200 <%= "lieu".equals(activePage) ? "bg-white text-brand-600 shadow-sm ring-1 ring-gray-900/5" : "text-gray-600 hover:bg-gray-100 hover:text-gray-900" %>">
+            <span class="w-5 text-center text-xs font-bold <%= "lieu".equals(activePage) ? "text-brand-500" : "text-gray-400 group-hover:text-gray-500" %>">LIE</span>
+            Lieux
+        </a>
+
+        <a href="/frais-livraison" class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md group transition-all duration-200 <%= "fraisLivraison".equals(activePage) ? "bg-white text-brand-600 shadow-sm ring-1 ring-gray-900/5" : "text-gray-600 hover:bg-gray-100 hover:text-gray-900" %>">
+            <span class="w-5 text-center text-xs font-bold <%= "fraisLivraison".equals(activePage) ? "text-brand-500" : "text-gray-400 group-hover:text-gray-500" %>">FRS</span>
+            Frais Livraison
+        </a>
     </nav>
     
     <!-- User Footer -->

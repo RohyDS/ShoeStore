@@ -82,6 +82,12 @@ public class ClientAffichageController {
     @Autowired
     private StockRepository stockRepository;
 
+    @Autowired
+    private LieuService lieuService;
+
+    @Autowired
+    private FraisLivraisonService fraisLivraisonService;
+
     @GetMapping
     public String index() {
         return "redirect:/clientAffichage/login";
@@ -183,6 +189,15 @@ public class ClientAffichageController {
         model.addAttribute("total", total);
         model.addAttribute("remiseGlobale", (remiseGlobale != null && remiseGlobale > 0) ? remiseGlobale : null);
         model.addAttribute("client", loggedInClient);
+        
+        // Ajouter les lieux et leurs frais pour le choix de livraison
+        model.addAttribute("lieux", lieuService.findAll());
+        Map<Integer, BigDecimal> fraisMap = new HashMap<>();
+        lieuService.findAll().forEach(l -> {
+            fraisMap.put(l.getId(), fraisLivraisonService.getFraisActuel(l.getId()));
+        });
+        model.addAttribute("fraisMap", fraisMap);
+
         return "client_affichage/panier";
     }
 
@@ -195,9 +210,16 @@ public class ClientAffichageController {
         model.addAttribute("commandes", commandes);
         model.addAttribute("client", loggedInClient);
         
-        // Récupérer le panier pour le badge
+        // Récupérer le panier pour afficher le nombre d'articles
         List<PanierItem> panier = (List<PanierItem>) session.getAttribute("panier");
         model.addAttribute("panierCount", panier != null ? panier.stream().mapToInt(PanierItem::getQuantite).sum() : 0);
+        
+        // Ajouter les frais pour l'affichage des totaux
+        Map<Integer, BigDecimal> fraisMap = new HashMap<>();
+        lieuService.findAll().forEach(l -> {
+            fraisMap.put(l.getId(), fraisLivraisonService.getFraisActuel(l.getId()));
+        });
+        model.addAttribute("fraisMap", fraisMap);
         
         return "client_affichage/commandes";
     }
@@ -305,7 +327,7 @@ public class ClientAffichageController {
 
     @PostMapping("/panier/valider")
     @Transactional
-    public String validerPanier(HttpSession session) {
+    public String validerPanier(@RequestParam(required = false) Integer lieuId, HttpSession session) {
         Clients loggedInClient = (Clients) session.getAttribute("loggedInClient");
         List<PanierItem> panier = (List<PanierItem>) session.getAttribute("panier");
 
@@ -319,6 +341,11 @@ public class ClientAffichageController {
         Commandes commande = new Commandes();
         commande.setClient(loggedInClient);
         commande.setDateCommande(LocalDateTime.now());
+        
+        if (lieuId != null) {
+            lieuService.findById(lieuId).ifPresent(commande::setLieu);
+        }
+        
         commande = commandesService.save(commande);
 
         // Créer les détails et mouvements de stock

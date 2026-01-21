@@ -163,22 +163,55 @@
                                         </span>
                                     </div>
                                 </c:if>
+                                <div class="space-y-4">
+                                    <label class="block text-sm font-medium text-gray-700">Lieu de livraison</label>
+                                    <select name="lieuId" id="lieuSelect" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm" required onchange="updateTotal()">
+                                        <option value="" disabled selected>Choisir un secteur</option>
+                                        <c:forEach items="${lieux}" var="lieu">
+                                            <option value="${lieu.id}">${lieu.nom}</option>
+                                        </c:forEach>
+                                    </select>
+                                </div>
                                 <div class="flex justify-between text-gray-600">
                                     <span>Livraison</span>
-                                    <span class="font-medium text-green-600">Gratuite</span>
+                                    <span class="font-medium text-indigo-600" id="deliveryFee">0.00 Ar</span>
                                 </div>
                                 <div class="border-t border-gray-100 pt-4 flex justify-between">
                                     <span class="text-lg font-bold text-gray-900">Total</span>
-                                    <span class="text-2xl font-black text-indigo-600">
+                                    <span class="text-2xl font-black text-indigo-600" id="finalTotal">
                                         <fmt:formatNumber value="${total}" pattern="#,##0.00" /> Ar
                                     </span>
                                 </div>
                             </div>
-                            <form action="/clientAffichage/panier/valider" method="post">
+                            <form action="/clientAffichage/panier/valider" method="post" id="validationForm">
+                                <input type="hidden" name="lieuId" id="hiddenLieuId">
                                 <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-4 rounded-xl hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all transform hover:-translate-y-0.5 active:translate-y-0">
                                     Valider la commande
                                 </button>
                             </form>
+                            <script>
+                                const fraisMap = {
+                                    <c:forEach items="${fraisMap}" var="entry" varStatus="status">
+                                        "${entry.key}": ${entry.value}${not status.last ? ',' : ''}
+                                    </c:forEach>
+                                };
+                                const baseTotal = ${total};
+
+                                function updateTotal() {
+                                    const lieuId = document.getElementById('lieuSelect').value;
+                                    const hiddenLieuId = document.getElementById('hiddenLieuId');
+                                    const deliveryFeeSpan = document.getElementById('deliveryFee');
+                                    const finalTotalSpan = document.getElementById('finalTotal');
+                                    
+                                    hiddenLieuId.value = lieuId;
+                                    
+                                    const fee = fraisMap[lieuId] || 0;
+                                    const total = parseFloat(baseTotal) + parseFloat(fee);
+                                    
+                                    deliveryFeeSpan.innerText = new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(fee) + " Ar";
+                                    finalTotalSpan.innerText = new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(total) + " Ar";
+                                }
+                            </script>
                             <p class="text-center text-xs text-gray-400 mt-4">
                                 En validant, vous acceptez nos conditions générales de vente.
                             </p>
