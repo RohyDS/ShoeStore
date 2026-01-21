@@ -31,10 +31,25 @@ public class FraisLivraisonController {
         return "frais_livraison/form";
     }
 
+    @GetMapping("/modifier")
+    public String edit(@RequestParam Integer lieuId, @RequestParam String dateFrais, Model model) {
+        model.addAttribute("activePage", "fraisLivraison");
+        LocalDateTime date = LocalDateTime.parse(dateFrais);
+        com.chaussures.models.FraisLivraisonId id = new com.chaussures.models.FraisLivraisonId(lieuId, date);
+        model.addAttribute("item", service.findById(id).orElse(new FraisLivraison()));
+        model.addAttribute("lieux", lieuService.findAll());
+        model.addAttribute("isEdit", true);
+        return "frais_livraison/form";
+    }
+
     @PostMapping("/enregistrer")
-    public String save(@ModelAttribute FraisLivraison item, @RequestParam Integer idLieu) {
+    public String save(@ModelAttribute FraisLivraison item, @RequestParam Integer idLieu, @RequestParam(required = false) String originalDate) {
         lieuService.findById(idLieu).ifPresent(item::setLieu);
-        item.setDateFrais(LocalDateTime.now());
+        if (originalDate != null && !originalDate.isEmpty()) {
+             item.setDateFrais(LocalDateTime.parse(originalDate));
+        } else {
+             item.setDateFrais(LocalDateTime.now());
+        }
         service.save(item);
         return "redirect:/frais-livraison";
     }

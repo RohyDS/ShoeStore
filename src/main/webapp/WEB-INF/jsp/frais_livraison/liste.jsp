@@ -32,6 +32,7 @@
                                     <th class="px-6 py-3">Lieu</th>
                                     <th class="px-6 py-3">Montant</th>
                                     <th class="px-6 py-3">Date d'application</th>
+                                    <th class="px-6 py-3 text-right">Actions</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-100">
@@ -44,6 +45,11 @@
                                         <td class="px-6 py-3 text-gray-500">
                                             <fmt:parseDate value="${item.dateFrais}" pattern="yyyy-MM-dd'T'HH:mm:ss" var="parsedDate" type="both" />
                                             <fmt:formatDate value="${parsedDate}" pattern="dd/MM/yyyy HH:mm" />
+                                        </td>
+                                        <td class="px-6 py-3 text-right">
+                                            <a href="/frais-livraison/modifier?lieuId=${item.lieu.id}&dateFrais=${item.dateFrais}" class="text-indigo-600 hover:text-indigo-900 font-medium transition-colors">
+                                                Modifier
+                                            </a>
                                         </td>
                                     </tr>
                                 </c:forEach>

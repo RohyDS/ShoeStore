@@ -30,6 +30,10 @@ public class FraisLivraisonService {
                 .orElse(BigDecimal.ZERO);
     }
 
+    public Optional<FraisLivraison> findById(com.chaussures.models.FraisLivraisonId id) {
+        return repository.findById(id);
+    }
+
     public FraisLivraison save(FraisLivraison frais) {
         return repository.save(frais);
     }
