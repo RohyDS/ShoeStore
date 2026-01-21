@@ -41,7 +41,10 @@
                                         <td class="px-6 py-3 text-indigo-600 font-bold">
                                             <fmt:formatNumber value="${item.montant}" pattern="#,##0.00" /> Ar
                                         </td>
-                                        <td class="px-6 py-3 text-gray-500">${item.dateFrais}</td>
+                                        <td class="px-6 py-3 text-gray-500">
+                                            <fmt:parseDate value="${item.dateFrais}" pattern="yyyy-MM-dd'T'HH:mm:ss" var="parsedDate" type="both" />
+                                            <fmt:formatDate value="${parsedDate}" pattern="dd/MM/yyyy HH:mm" />
+                                        </td>
                                     </tr>
                                 </c:forEach>
                             </tbody>

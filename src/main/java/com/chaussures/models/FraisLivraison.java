@@ -26,13 +26,3 @@ public class FraisLivraison {
     @Column(name = "montant", nullable = false)
     private BigDecimal montant;
 }
-
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@EqualsAndHashCode
-public class FraisLivraisonId implements Serializable {
-    private Integer lieu;
-    private LocalDateTime dateFrais;
-}

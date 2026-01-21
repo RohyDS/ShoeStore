@@ -29,7 +29,7 @@
                         <div class="space-y-4">
                             <div>
                                 <label for="idLieu" class="block text-sm font-semibold text-gray-700 mb-2">Secteur (Lieu)</label>
-                                <select id="idLieu" name="lieu.id" required class="w-full px-4 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all">
+                                <select id="idLieu" name="idLieu" required class="w-full px-4 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all">
                                     <c:forEach items="${lieux}" var="l">
                                         <option value="${l.id}" ${item.lieu.id == l.id ? 'selected' : ''}>${l.nom}</option>
                                     </c:forEach>
