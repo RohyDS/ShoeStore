@@ -32,7 +32,7 @@ public class FraisLivraison {
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-class FraisLivraisonId implements Serializable {
+public class FraisLivraisonId implements Serializable {
     private Integer lieu;
     private LocalDateTime dateFrais;
 }

@@ -5,6 +5,7 @@ import com.chaussures.repositories.FraisLivraisonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +21,13 @@ public class FraisLivraisonService {
 
     public Optional<FraisLivraison> findLatestByLieu(Integer lieuId) {
         return repository.findLatestByLieuId(lieuId);
+    }
+
+    public BigDecimal getFraisActuel(Integer lieuId) {
+        if (lieuId == null) return BigDecimal.ZERO;
+        return repository.findLatestByLieuId(lieuId)
+                .map(FraisLivraison::getMontant)
+                .orElse(BigDecimal.ZERO);
     }
 
     public FraisLivraison save(FraisLivraison frais) {

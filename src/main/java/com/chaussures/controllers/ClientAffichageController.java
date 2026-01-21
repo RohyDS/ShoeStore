@@ -38,6 +38,8 @@ import com.chaussures.services.PointureService;
 import com.chaussures.services.RemiseService;
 import com.chaussures.services.StockService;
 import com.chaussures.services.TypeMvtStockService;
+import com.chaussures.services.LieuService;
+import com.chaussures.services.FraisLivraisonService;
 import com.chaussures.models.Remise;
 
 import jakarta.servlet.http.HttpSession;
