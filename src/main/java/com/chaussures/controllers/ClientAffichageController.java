@@ -327,9 +327,23 @@ public class ClientAffichageController {
         return "redirect:/clientAffichage/panier";
     }
 
+    @PostMapping("/panier/updateLieu")
+    public String updateLieu(@RequestParam Integer varianteId, @RequestParam Integer lieuId, HttpSession session) {
+        List<PanierItem> panier = (List<PanierItem>) session.getAttribute("panier");
+        if (panier != null) {
+            for (PanierItem item : panier) {
+                if (item.getVarianteId().equals(varianteId)) {
+                    item.setLieuId(lieuId);
+                    break;
+                }
+            }
+        }
+        return "redirect:/clientAffichage/panier";
+    }
+
     @PostMapping("/panier/valider")
     @Transactional
-    public String validerPanier(@RequestParam(required = false) Integer lieuId, HttpSession session) {
+    public String validerPanier(HttpSession session) {
         Clients loggedInClient = (Clients) session.getAttribute("loggedInClient");
         List<PanierItem> panier = (List<PanierItem>) session.getAttribute("panier");
 
@@ -344,10 +358,6 @@ public class ClientAffichageController {
         commande.setClient(loggedInClient);
         commande.setDateCommande(LocalDateTime.now());
         
-        if (lieuId != null) {
-            lieuService.findById(lieuId).ifPresent(commande::setLieu);
-        }
-        
         commande = commandesService.save(commande);
 
         // Créer les détails et mouvements de stock
@@ -360,6 +370,11 @@ public class ClientAffichageController {
                 detail.setChaussuresCouleurPointure(variante);
                 detail.setQuantite(item.getQuantite());
                 detail.setPrix(item.getPrixRemise() != null ? item.getPrixRemise() : item.getPrixUnitaire());
+                
+                if (item.getLieuId() != null) {
+                    lieuService.findById(item.getLieuId()).ifPresent(detail::setLieu);
+                }
+
                 commandesDetailsService.save(detail);
 
                 // 2. Enregistrer le mouvement de stock (Sortie)

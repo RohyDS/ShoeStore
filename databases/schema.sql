@@ -113,29 +113,7 @@ CREATE TABLE IF NOT EXISTS stock (
     date_mvt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Table COMMANDES
-CREATE TABLE IF NOT EXISTS commandes (
-    id SERIAL PRIMARY KEY,
-    id_client INT REFERENCES clients(id),
-    date_commande TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
 
--- Table COMMANDES_DETAILS
-CREATE TABLE IF NOT EXISTS commandes_details (
-    id_cd SERIAL PRIMARY KEY,
-    id_commande INT REFERENCES commandes(id),
-    id_chaussures_couleur_pointure INT REFERENCES chaussures_couleur_pointure(id),
-    quantite INT NOT NULL,
-    prix NUMERIC(15, 2) NOT NULL
-);
-
--- Table REMISE
-CREATE TABLE IF NOT EXISTS remise (
-    id SERIAL PRIMARY KEY,
-    quantite INT NOT NULL,
-    remise NUMERIC(5, 2) NOT NULL,
-    date_remise TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
 
 -- Table LIEU
 CREATE TABLE IF NOT EXISTS lieu (
@@ -151,6 +129,32 @@ CREATE TABLE IF NOT EXISTS frais_livraison (
     PRIMARY KEY (id_lieu, date_frais)
 );
 
+-- Table COMMANDES
+CREATE TABLE IF NOT EXISTS commandes (
+    id SERIAL PRIMARY KEY,
+    id_client INT REFERENCES clients(id),
+    date_commande TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Table COMMANDES_DETAILS
+CREATE TABLE IF NOT EXISTS commandes_details (
+    id_cd SERIAL PRIMARY KEY,
+    id_commande INT REFERENCES commandes(id),
+    id_chaussures_couleur_pointure INT REFERENCES chaussures_couleur_pointure(id),
+    quantite INT NOT NULL,
+    prix NUMERIC(15, 2) NOT NULL,
+    id_lieu INT REFERENCES lieu(id)
+);
+
+-- Table REMISE
+CREATE TABLE IF NOT EXISTS remise (
+    id SERIAL PRIMARY KEY,
+    quantite INT NOT NULL,
+    remise NUMERIC(5, 2) NOT NULL,
+    date_remise TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
 -- Modification table COMMANDES
-ALTER TABLE commandes ADD COLUMN id_lieu INT REFERENCES lieu(id);
+-- ALTER TABLE commandes ADD COLUMN id_lieu INT REFERENCES lieu(id); -- Déplacé vers commandes_details
 

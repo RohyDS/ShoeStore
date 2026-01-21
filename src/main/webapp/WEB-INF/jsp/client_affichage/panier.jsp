@@ -95,30 +95,58 @@
                                         <p>Couleur: <span class="text-gray-900 font-medium">${item.couleur}</span></p>
                                         <p>Pointure: <span class="text-gray-900 font-medium">${item.pointure}</span></p>
                                     </div>
-                                    <div class="flex justify-between items-end">
-                                        <div class="text-sm">
-                                            <span class="text-gray-500">Prix:</span>
-                                            <c:if test="${item.remiseLignePourcentage != null}">
-                                                <span class="text-gray-400 line-through ml-1 text-xs">
-                                                    <fmt:formatNumber value="${item.prixUnitaire}" pattern="#,##0.00" /> Ar
-                                                </span>
-                                                <span class="text-indigo-600 font-bold ml-1">
-                                                    <fmt:formatNumber value="${item.prixLigneRemise}" pattern="#,##0.00" /> Ar
-                                                </span>
-                                                <span class="ml-1 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
-                                                    -${item.remiseLignePourcentage}%
-                                                </span>
+                                    <div class="mb-4">
+                                        <form action="/clientAffichage/panier/updateLieu" method="post" class="flex items-center gap-2">
+                                            <input type="hidden" name="varianteId" value="${item.varianteId}">
+                                            <label class="text-sm text-gray-700">Livraison:</label>
+                                            <select name="lieuId" class="border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm py-1" onchange="this.form.submit()">
+                                                <option value="" ${item.lieuId == null ? 'selected' : ''}>Choisir un secteur</option>
+                                                <c:forEach items="${lieux}" var="lieu">
+                                                    <option value="${lieu.id}" ${item.lieuId == lieu.id ? 'selected' : ''}>${lieu.nom}</option>
+                                                </c:forEach>
+                                            </select>
+                                        </form>
+                                    </div>
+                                    <div class="flex justify-between items-end mt-4 pt-4 border-t border-gray-50">
+                                        <div class="space-y-1">
+                                            <div class="text-sm">
+                                                <span class="text-gray-500">Prix:</span>
+                                                <c:if test="${item.remiseLignePourcentage != null}">
+                                                    <span class="text-gray-400 line-through ml-1 text-xs">
+                                                        <fmt:formatNumber value="${item.prixUnitaire}" pattern="#,##0.00" /> Ar
+                                                    </span>
+                                                    <span class="text-indigo-600 font-bold ml-1">
+                                                        <fmt:formatNumber value="${item.prixLigneRemise}" pattern="#,##0.00" /> Ar
+                                                    </span>
+                                                    <span class="ml-1 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                                                        -${item.remiseLignePourcentage}%
+                                                    </span>
+                                                </c:if>
+                                                <c:if test="${item.remiseLignePourcentage == null}">
+                                                    <span class="text-gray-900 font-bold ml-1">
+                                                        <fmt:formatNumber value="${item.prixUnitaire}" pattern="#,##0.00" /> Ar
+                                                    </span>
+                                                </c:if>
+                                                <span class="text-gray-400 mx-2">×</span>
+                                                <span class="text-gray-900 font-bold">${item.quantite}</span>
+                                            </div>
+                                            <div class="text-sm flex items-center gap-2">
+                                                <span class="text-gray-500">Sous-total:</span>
+                                                <span class="text-gray-900 font-semibold"><fmt:formatNumber value="${item.total}" pattern="#,##0.00" /> Ar</span>
+                                            </div>
+                                            <c:if test="${item.lieuId != null}">
+                                                <div class="text-sm flex items-center gap-2">
+                                                    <span class="text-gray-500">Frais de livraison:</span>
+                                                    <span class="text-blue-600 font-semibold">+ <fmt:formatNumber value="${fraisMap[item.lieuId]}" pattern="#,##0.00" /> Ar</span>
+                                                </div>
                                             </c:if>
-                                            <c:if test="${item.remiseLignePourcentage == null}">
-                                                <span class="text-gray-900 font-bold ml-1">
-                                                    <fmt:formatNumber value="${item.prixUnitaire}" pattern="#,##0.00" /> Ar
-                                                </span>
-                                            </c:if>
-                                            <span class="text-gray-400 mx-2">×</span>
-                                            <span class="text-gray-900 font-bold">${item.quantite}</span>
                                         </div>
-                                        <div class="text-indigo-600 font-extrabold text-lg">
-                                            <fmt:formatNumber value="${item.total}" pattern="#,##0.00" /> Ar
+                                        <div class="text-right">
+                                            <p class="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Total ligne</p>
+                                            <div class="text-indigo-600 font-extrabold text-xl">
+                                                <c:set var="fraisLigne" value="${item.lieuId != null ? fraisMap[item.lieuId] : 0}" />
+                                                <fmt:formatNumber value="${item.total + fraisLigne}" pattern="#,##0.00" /> Ar
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -163,55 +191,31 @@
                                         </span>
                                     </div>
                                 </c:if>
-                                <div class="space-y-4">
-                                    <label class="block text-sm font-medium text-gray-700">Lieu de livraison</label>
-                                    <select name="lieuId" id="lieuSelect" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm" required onchange="updateTotal()">
-                                        <option value="" disabled selected>Choisir un secteur</option>
-                                        <c:forEach items="${lieux}" var="lieu">
-                                            <option value="${lieu.id}">${lieu.nom}</option>
-                                        </c:forEach>
-                                    </select>
-                                </div>
-                                <div class="flex justify-between text-gray-600">
+                                    <div class="flex justify-between text-gray-600">
                                     <span>Livraison</span>
-                                    <span class="font-medium text-indigo-600" id="deliveryFee">0.00 Ar</span>
+                                    <span class="font-medium text-indigo-600" id="deliveryFee">
+                                        <c:set var="totalFrais" value="0" />
+                                        <c:forEach items="${panier}" var="item">
+                                            <c:if test="${item.lieuId != null}">
+                                                <c:set var="totalFrais" value="${totalFrais + fraisMap[item.lieuId]}" />
+                                            </c:if>
+                                        </c:forEach>
+                                        <fmt:formatNumber value="${totalFrais}" pattern="#,##0.00" /> Ar
+                                    </span>
                                 </div>
                                 <div class="border-t border-gray-100 pt-4 flex justify-between">
                                     <span class="text-lg font-bold text-gray-900">Total</span>
                                     <span class="text-2xl font-black text-indigo-600" id="finalTotal">
-                                        <fmt:formatNumber value="${total}" pattern="#,##0.00" /> Ar
+                                        <fmt:formatNumber value="${total + totalFrais}" pattern="#,##0.00" /> Ar
                                     </span>
                                 </div>
                             </div>
                             <form action="/clientAffichage/panier/valider" method="post" id="validationForm">
-                                <input type="hidden" name="lieuId" id="hiddenLieuId">
                                 <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-4 rounded-xl hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all transform hover:-translate-y-0.5 active:translate-y-0">
                                     Valider la commande
                                 </button>
                             </form>
-                            <script>
-                                const fraisMap = {
-                                    <c:forEach items="${fraisMap}" var="entry" varStatus="status">
-                                        "${entry.key}": ${entry.value}${not status.last ? ',' : ''}
-                                    </c:forEach>
-                                };
-                                const baseTotal = ${total};
-
-                                function updateTotal() {
-                                    const lieuId = document.getElementById('lieuSelect').value;
-                                    const hiddenLieuId = document.getElementById('hiddenLieuId');
-                                    const deliveryFeeSpan = document.getElementById('deliveryFee');
-                                    const finalTotalSpan = document.getElementById('finalTotal');
-                                    
-                                    hiddenLieuId.value = lieuId;
-                                    
-                                    const fee = fraisMap[lieuId] || 0;
-                                    const total = parseFloat(baseTotal) + parseFloat(fee);
-                                    
-                                    deliveryFeeSpan.innerText = new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(fee) + " Ar";
-                                    finalTotalSpan.innerText = new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(total) + " Ar";
-                                }
-                            </script>
+                            <!-- Script supprimé car le calcul est maintenant fait côté serveur/JSP avec rechargement -->
                             <p class="text-center text-xs text-gray-400 mt-4">
                                 En validant, vous acceptez nos conditions générales de vente.
                             </p>

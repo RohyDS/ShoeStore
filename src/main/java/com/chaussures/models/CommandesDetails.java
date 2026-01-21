@@ -29,4 +29,8 @@ public class CommandesDetails {
 
     @Column(nullable = false)
     private BigDecimal prix;
+
+    @ManyToOne
+    @JoinColumn(name = "id_lieu")
+    private Lieu lieu;
 }

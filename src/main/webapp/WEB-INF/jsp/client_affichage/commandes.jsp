@@ -90,12 +90,6 @@
                                         </p>
                                     </div>
                                     <div>
-                                        <p class="text-xs text-gray-500 uppercase font-bold tracking-wider">Lieu</p>
-                                        <p class="text-sm font-semibold text-gray-900">
-                                            <c:out value="${commande.lieu != null ? commande.lieu.nom : 'Non spécifié'}" />
-                                        </p>
-                                    </div>
-                                    <div>
                                         <p class="text-xs text-gray-500 uppercase font-bold tracking-wider">Commande N°</p>
                                         <p class="text-sm font-semibold text-gray-900">#CMD-${commande.id}</p>
                                     </div>
@@ -103,15 +97,18 @@
                                 <div class="text-right">
                                     <p class="text-xs text-gray-500 uppercase font-bold tracking-wider">Total (avec livraison)</p>
                                     <c:set var="totalCommande" value="0" />
+                                    <c:set var="totalFrais" value="0" />
                                     <c:forEach items="${commande.details}" var="d">
                                         <c:set var="totalCommande" value="${totalCommande + (d.prix * d.quantite)}" />
+                                        <c:if test="${d.lieu != null}">
+                                            <c:set var="totalFrais" value="${totalFrais + fraisMap[d.lieu.id]}" />
+                                        </c:if>
                                     </c:forEach>
-                                    <c:set var="frais" value="${commande.lieu != null ? fraisMap[commande.lieu.id] : 0}" />
                                     <p class="text-lg font-black text-indigo-600">
-                                        <fmt:formatNumber value="${totalCommande + frais}" pattern="#,##0.00" /> Ar
+                                        <fmt:formatNumber value="${totalCommande + totalFrais}" pattern="#,##0.00" /> Ar
                                     </p>
-                                    <c:if test="${frais > 0}">
-                                        <p class="text-[10px] text-gray-400">Inclut <fmt:formatNumber value="${frais}" pattern="#,##0.00" /> Ar de frais</p>
+                                    <c:if test="${totalFrais > 0}">
+                                        <p class="text-[10px] text-gray-400">Inclut <fmt:formatNumber value="${totalFrais}" pattern="#,##0.00" /> Ar de frais totaux</p>
                                     </c:if>
                                 </div>
                             </div>
@@ -137,12 +134,36 @@
                                                             <span class="text-xs text-gray-300">|</span>
                                                             <span class="text-xs text-gray-500">Pointure: ${detail.chaussuresCouleurPointure.pointure.nom}</span>
                                                         </div>
+                                                        <c:if test="${detail.lieu != null}">
+                                                            <div class="mt-2 flex items-center gap-2">
+                                                                <span class="px-2 py-0.5 bg-blue-50 text-blue-700 text-[10px] font-bold rounded uppercase">Livraison: ${detail.lieu.nom}</span>
+                                                                <span class="text-[10px] text-gray-400">+ <fmt:formatNumber value="${fraisMap[detail.lieu.id]}" pattern="#,##0.00" /> Ar</span>
+                                                            </div>
+                                                        </c:if>
                                                     </div>
-                                                    <div class="text-right">
-                                                        <p class="text-sm font-bold text-gray-900">
-                                                            <fmt:formatNumber value="${detail.prix * detail.quantite}" pattern="#,##0.00" /> Ar
-                                                        </p>
-                                                        <p class="text-xs text-gray-500">${detail.quantite} x <fmt:formatNumber value="${detail.prix}" pattern="#,##0.00" /> Ar</p>
+                                                    <div class="text-right space-y-1">
+                                                        <div class="text-sm">
+                                                            <span class="text-gray-500">Sous-total:</span>
+                                                            <span class="font-bold text-gray-900">
+                                                                <fmt:formatNumber value="${detail.prix * detail.quantite}" pattern="#,##0.00" /> Ar
+                                                            </span>
+                                                        </div>
+                                                        <c:if test="${detail.lieu != null}">
+                                                            <div class="text-sm">
+                                                                <span class="text-gray-500">Frais:</span>
+                                                                <span class="font-bold text-blue-600">
+                                                                    + <fmt:formatNumber value="${fraisMap[detail.lieu.id]}" pattern="#,##0.00" /> Ar
+                                                                </span>
+                                                            </div>
+                                                        </c:if>
+                                                        <div class="text-sm border-t border-gray-50 pt-1">
+                                                            <span class="text-gray-500">Total:</span>
+                                                            <c:set var="fraisLigne" value="${detail.lieu != null ? fraisMap[detail.lieu.id] : 0}" />
+                                                            <span class="font-black text-indigo-600">
+                                                                <fmt:formatNumber value="${(detail.prix * detail.quantite) + fraisLigne}" pattern="#,##0.00" /> Ar
+                                                            </span>
+                                                        </div>
+                                                        <p class="text-[10px] text-gray-400">${detail.quantite} x <fmt:formatNumber value="${detail.prix}" pattern="#,##0.00" /> Ar</p>
                                                     </div>
                                                 </div>
                                             </div>

@@ -21,6 +21,7 @@ public class PanierItem {
     private Double remisePourcentage; // Remise effective (la meilleure entre ligne et globale)
     private BigDecimal prixRemise;    // Prix après remise effective
     private Double remiseLignePourcentage; // Remise basée uniquement sur la quantité de cet article
+    private Integer lieuId; // ID du lieu de livraison pour cet article
 
     public BigDecimal getTotal() {
         return (prixRemise != null ? prixRemise : prixUnitaire).multiply(new BigDecimal(quantite));

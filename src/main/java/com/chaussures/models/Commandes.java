@@ -23,10 +23,6 @@ public class Commandes {
     @Column(name = "date_commande")
     private LocalDateTime dateCommande;
 
-    @ManyToOne
-    @JoinColumn(name = "id_lieu")
-    private Lieu lieu;
-
     @OneToMany(mappedBy = "commande", cascade = CascadeType.ALL)
     private List<CommandesDetails> details;
 }
