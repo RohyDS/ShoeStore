@@ -117,15 +117,32 @@
                                     <p class="text-xs text-gray-500 uppercase font-bold tracking-wider">Total (avec livraison)</p>
                                     <c:set var="totalCommande" value="0" />
                                     <c:set var="totalFrais" value="0" />
+                                    <c:set var="totalRembourse" value="0" />
                                     <c:forEach items="${commande.details}" var="d">
                                         <c:set var="totalCommande" value="${totalCommande + (d.prix * d.quantite)}" />
                                         <c:if test="${d.lieu != null}">
                                             <c:set var="totalFrais" value="${totalFrais + fraisMap[d.lieu.id]}" />
                                         </c:if>
+                                        <c:forEach items="${d.retours}" var="r">
+                                            <c:set var="totalRembourse" value="${totalRembourse + r.montantRembourse}" />
+                                        </c:forEach>
                                     </c:forEach>
-                                    <p class="text-lg font-black text-indigo-600">
-                                        <fmt:formatNumber value="${totalCommande + totalFrais}" pattern="#,##0.00" /> Ar
-                                    </p>
+                                    
+                                    <div class="flex flex-col items-end">
+                                        <p class="text-lg font-black text-indigo-600">
+                                            <fmt:formatNumber value="${totalCommande + totalFrais}" pattern="#,##0.00" /> Ar
+                                        </p>
+                                        <c:if test="${totalRembourse > 0}">
+                                            <p class="text-sm font-bold text-red-600 mt-1">
+                                                - <fmt:formatNumber value="${totalRembourse}" pattern="#,##0.00" /> Ar (Remboursé)
+                                            </p>
+                                            <div class="h-px w-24 bg-gray-200 my-1"></div>
+                                            <p class="text-sm font-black text-gray-900">
+                                                Net: <fmt:formatNumber value="${totalCommande + totalFrais - totalRembourse}" pattern="#,##0.00" /> Ar
+                                            </p>
+                                        </c:if>
+                                    </div>
+                                    
                                     <c:if test="${totalFrais > 0}">
                                         <p class="text-[10px] text-gray-400">Inclut <fmt:formatNumber value="${totalFrais}" pattern="#,##0.00" /> Ar de frais totaux</p>
                                     </c:if>
@@ -182,6 +199,18 @@
                                                                 <fmt:formatNumber value="${(detail.prix * detail.quantite) + fraisLigne}" pattern="#,##0.00" /> Ar
                                                             </span>
                                                         </div>
+                                                        
+                                                        <c:set var="totalRembourseLigne" value="0" />
+                                                        <c:forEach items="${detail.retours}" var="r">
+                                                            <c:set var="totalRembourseLigne" value="${totalRembourseLigne + r.montantRembourse}" />
+                                                        </c:forEach>
+                                                        
+                                                        <c:if test="${totalRembourseLigne > 0}">
+                                                            <div class="text-sm font-bold text-gray-900 mt-1">
+                                                                <span class="text-gray-500 text-xs">Net:</span>
+                                                                <fmt:formatNumber value="${(detail.prix * detail.quantite) + fraisLigne - totalRembourseLigne}" pattern="#,##0.00" /> Ar
+                                                            </div>
+                                                        </c:if>
                                                         <p class="text-[10px] text-gray-400">${detail.quantite} x <fmt:formatNumber value="${detail.prix}" pattern="#,##0.00" /> Ar</p>
                                                         
                                                         <!-- Affichage des retours déjà effectués -->
@@ -189,12 +218,17 @@
                                                             <div class="mt-3 p-2 bg-red-50 rounded-lg border border-red-100">
                                                                 <p class="text-[10px] font-bold text-red-600 uppercase mb-1">Articles retournés</p>
                                                                 <c:forEach items="${detail.retours}" var="r">
-                                                                    <div class="flex justify-between text-[10px] text-red-500 italic">
-                                                                        <span>
-                                                                            <fmt:parseDate value="${r.dateRetour}" pattern="yyyy-MM-dd'T'HH:mm" var="rDate" type="both" />
-                                                                            <fmt:formatDate value="${rDate}" pattern="dd/MM/yyyy HH:mm" />
+                                                                    <div class="flex justify-between items-center text-[10px] text-red-500 italic mb-1 last:mb-0">
+                                                                        <div class="flex flex-col">
+                                                                            <span>
+                                                                                <fmt:parseDate value="${r.dateRetour}" pattern="yyyy-MM-dd'T'HH:mm" var="rDate" type="both" />
+                                                                                <fmt:formatDate value="${rDate}" pattern="dd/MM/yyyy HH:mm" />
+                                                                            </span>
+                                                                            <span class="font-bold">-${r.quantite} unité(s)</span>
+                                                                        </div>
+                                                                        <span class="font-black text-xs">
+                                                                            - <fmt:formatNumber value="${r.montantRembourse}" pattern="#,##0.00" /> Ar
                                                                         </span>
-                                                                        <span class="font-bold">-${r.quantite} unité(s)</span>
                                                                     </div>
                                                                 </c:forEach>
                                                             </div>
