@@ -115,6 +115,11 @@
                                                         <span class="text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded font-medium uppercase tracking-wider">${retour.commandeDetail.chaussuresCouleurPointure.couleur.nom}</span>
                                                         <span class="text-[10px] text-gray-400">Pointure ${retour.commandeDetail.chaussuresCouleurPointure.pointure.nom}</span>
                                                     </div>
+                                                    <c:if test="${not empty retour.motif}">
+                                                        <span class="text-[10px] text-indigo-500 mt-2 bg-indigo-50 px-2 py-0.5 rounded-full w-fit italic">
+                                                            "${retour.motif}"
+                                                        </span>
+                                                    </c:if>
                                                 </div>
                                             </td>
                                             <td class="py-5 px-6 border-y border-gray-100 text-center">

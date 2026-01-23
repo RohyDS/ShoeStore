@@ -23,6 +23,9 @@ public class Retour {
     @Column(name = "montant_rembourse", nullable = false)
     private BigDecimal montantRembourse;
 
+    @Column(columnDefinition = "TEXT")
+    private String motif;
+
     @Column(name = "date_retour")
     private LocalDateTime dateRetour = LocalDateTime.now();
 }

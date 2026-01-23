@@ -31,7 +31,7 @@ public class RetourService {
     private TypeMvtStockRepository typeMvtRepository;
 
     @Transactional
-    public Retour effectuerRetour(Integer idCd, Integer quantite) {
+    public Retour effectuerRetour(Integer idCd, Integer quantite, String motif) {
         CommandesDetails cd = cdRepository.findById(idCd)
                 .orElseThrow(() -> new RuntimeException("Ligne de commande non trouvée"));
 
@@ -48,6 +48,7 @@ public class RetourService {
         retour.setCommandeDetail(cd);
         retour.setQuantite(quantite);
         retour.setMontantRembourse(montantRembourse);
+        retour.setMotif(motif);
         retour.setDateRetour(LocalDateTime.now());
         Retour saved = retourRepository.save(retour);
 

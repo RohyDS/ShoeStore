@@ -289,12 +289,12 @@ public class ClientAffichageController {
     }
 
     @PostMapping("/commande/retourner")
-    public String retournerArticle(@RequestParam Integer idCd, @RequestParam Integer quantite, HttpSession session) {
+    public String retournerArticle(@RequestParam Integer idCd, @RequestParam Integer quantite, @RequestParam(required = false) String motif, HttpSession session) {
         Clients loggedInClient = (Clients) session.getAttribute("loggedInClient");
         if (loggedInClient == null) return "redirect:/clientAffichage/login";
 
         try {
-            retourService.effectuerRetour(idCd, quantite);
+            retourService.effectuerRetour(idCd, quantite, motif);
             return "redirect:/clientAffichage/commandes?returned=true";
         } catch (Exception e) {
             return "redirect:/clientAffichage/commandes?error=" + e.getMessage();
@@ -306,12 +306,16 @@ public class ClientAffichageController {
         
         int totalQuantite = panier.stream().mapToInt(PanierItem::getQuantite).sum();
         
-        // 1. Règle Globale : 20% si quantité totale > 5
-        double remiseGlobale = (totalQuantite > 5) ? 20.0 : 0.0;
+        // 1. Règle Globale : Récupérée dynamiquement depuis la base de données
+        double remiseGlobale = remiseService.findApplicableRemise(totalQuantite)
+                                .map(r -> r.getRemise())
+                                .orElse(0.0);
 
         for (PanierItem item : panier) {
-            // 2. Règle de Ligne : 10% si quantité ligne > 1
-            double remiseLigne = (item.getQuantite() > 1) ? 10.0 : 0.0;
+            // 2. Règle de Ligne : Récupérée dynamiquement pour la quantité de la ligne
+            double remiseLigne = remiseService.findApplicableRemise(item.getQuantite())
+                                    .map(r -> r.getRemise())
+                                    .orElse(0.0);
             item.setRemiseLignePourcentage(remiseLigne);
             
             // 3. Calcul de la remise effective (Successive : 10% puis 20% sur le reste)

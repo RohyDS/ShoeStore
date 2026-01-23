@@ -225,6 +225,9 @@
                                                                                 <fmt:formatDate value="${rDate}" pattern="dd/MM/yyyy HH:mm" />
                                                                             </span>
                                                                             <span class="font-bold">-${r.quantite} unité(s)</span>
+                                                                            <c:if test="${not empty r.motif}">
+                                                                                <span class="text-[9px] text-gray-400 mt-0.5">Motif: ${r.motif}</span>
+                                                                            </c:if>
                                                                         </div>
                                                                         <span class="font-black text-xs">
                                                                             - <fmt:formatNumber value="${r.montantRembourse}" pattern="#,##0.00" /> Ar
@@ -235,14 +238,18 @@
                                                         </c:if>
 
                                                         <!-- Formulaire de retour -->
-                                                        <form action="/clientAffichage/commande/retourner" method="POST" class="mt-4 flex items-center gap-2 justify-end">
+                                                        <form action="/clientAffichage/commande/retourner" method="POST" class="mt-4 flex flex-col gap-2 items-end">
                                                             <input type="hidden" name="idCd" value="${detail.idCd}">
-                                                            <input type="number" name="quantite" min="1" max="${detail.quantite}" value="1" 
-                                                                   class="w-16 px-2 py-1 text-xs border border-gray-300 rounded-lg focus:ring-1 focus:ring-indigo-500 outline-none">
-                                                            <button type="submit" 
-                                                                    class="text-[10px] font-bold uppercase tracking-wider bg-red-50 text-red-600 px-3 py-1.5 rounded-lg hover:bg-red-600 hover:text-white transition-all">
-                                                                Retourner
-                                                            </button>
+                                                            <div class="flex items-center gap-2">
+                                                                <input type="text" name="motif" placeholder="Motif du retour..." 
+                                                                       class="w-40 px-2 py-1 text-xs border border-gray-300 rounded-lg focus:ring-1 focus:ring-indigo-500 outline-none">
+                                                                <input type="number" name="quantite" min="1" max="${detail.quantite}" value="1" 
+                                                                       class="w-16 px-2 py-1 text-xs border border-gray-300 rounded-lg focus:ring-1 focus:ring-indigo-500 outline-none">
+                                                                <button type="submit" 
+                                                                        class="text-[10px] font-bold uppercase tracking-wider bg-red-50 text-red-600 px-3 py-1.5 rounded-lg hover:bg-red-600 hover:text-white transition-all">
+                                                                    Retourner
+                                                                </button>
+                                                            </div>
                                                         </form>
                                                     </div>
                                                 </div>
