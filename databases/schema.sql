@@ -154,6 +154,15 @@ CREATE TABLE IF NOT EXISTS remise (
     date_remise TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Table RETOURS
+CREATE TABLE IF NOT EXISTS retours (
+    id SERIAL PRIMARY KEY,
+    id_cd INT REFERENCES commandes_details(id_cd),
+    quantite INT NOT NULL,
+    montant_rembourse NUMERIC(15, 2) NOT NULL,
+    date_retour TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 
 -- Modification table COMMANDES
 -- ALTER TABLE commandes ADD COLUMN id_lieu INT REFERENCES lieu(id); -- Déplacé vers commandes_details

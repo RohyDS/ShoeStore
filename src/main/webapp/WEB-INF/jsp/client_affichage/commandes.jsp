@@ -61,6 +61,24 @@
             <h1 class="text-3xl font-extrabold text-gray-900">Historique des commandes</h1>
         </div>
 
+        <c:if test="${param.returned == 'true'}">
+            <div class="mb-6 p-4 bg-green-50 border border-green-200 text-green-700 rounded-xl flex items-center gap-3">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                <span class="text-sm font-medium">L'article a été retourné avec succès. Le montant a été déduit du CA.</span>
+            </div>
+        </c:if>
+
+        <c:if test="${not empty param.error}">
+            <div class="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-xl flex items-center gap-3">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                <span class="text-sm font-medium">Erreur : ${param.error}</span>
+            </div>
+        </c:if>
+
         <c:choose>
             <c:when test="${empty commandes}">
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-12 text-center">
@@ -86,7 +104,8 @@
                                     <div>
                                         <p class="text-xs text-gray-500 uppercase font-bold tracking-wider">Date</p>
                                         <p class="text-sm font-semibold text-gray-900">
-                                            ${commande.dateCommande}
+                                            <fmt:parseDate value="${commande.dateCommande}" pattern="yyyy-MM-dd'T'HH:mm" var="parsedDate" type="both" />
+                                            <fmt:formatDate value="${parsedDate}" pattern="dd/MM/yyyy HH:mm" />
                                         </p>
                                     </div>
                                     <div>
@@ -164,6 +183,33 @@
                                                             </span>
                                                         </div>
                                                         <p class="text-[10px] text-gray-400">${detail.quantite} x <fmt:formatNumber value="${detail.prix}" pattern="#,##0.00" /> Ar</p>
+                                                        
+                                                        <!-- Affichage des retours déjà effectués -->
+                                                        <c:if test="${not empty detail.retours}">
+                                                            <div class="mt-3 p-2 bg-red-50 rounded-lg border border-red-100">
+                                                                <p class="text-[10px] font-bold text-red-600 uppercase mb-1">Articles retournés</p>
+                                                                <c:forEach items="${detail.retours}" var="r">
+                                                                    <div class="flex justify-between text-[10px] text-red-500 italic">
+                                                                        <span>
+                                                                            <fmt:parseDate value="${r.dateRetour}" pattern="yyyy-MM-dd'T'HH:mm" var="rDate" type="both" />
+                                                                            <fmt:formatDate value="${rDate}" pattern="dd/MM/yyyy HH:mm" />
+                                                                        </span>
+                                                                        <span class="font-bold">-${r.quantite} unité(s)</span>
+                                                                    </div>
+                                                                </c:forEach>
+                                                            </div>
+                                                        </c:if>
+
+                                                        <!-- Formulaire de retour -->
+                                                        <form action="/clientAffichage/commande/retourner" method="POST" class="mt-4 flex items-center gap-2 justify-end">
+                                                            <input type="hidden" name="idCd" value="${detail.idCd}">
+                                                            <input type="number" name="quantite" min="1" max="${detail.quantite}" value="1" 
+                                                                   class="w-16 px-2 py-1 text-xs border border-gray-300 rounded-lg focus:ring-1 focus:ring-indigo-500 outline-none">
+                                                            <button type="submit" 
+                                                                    class="text-[10px] font-bold uppercase tracking-wider bg-red-50 text-red-600 px-3 py-1.5 rounded-lg hover:bg-red-600 hover:text-white transition-all">
+                                                                Retourner
+                                                            </button>
+                                                        </form>
                                                     </div>
                                                 </div>
                                             </div>

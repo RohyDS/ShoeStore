@@ -40,6 +40,7 @@ import com.chaussures.services.StockService;
 import com.chaussures.services.TypeMvtStockService;
 import com.chaussures.services.LieuService;
 import com.chaussures.services.FraisLivraisonService;
+import com.chaussures.services.RetourService;
 import com.chaussures.models.Remise;
 
 import jakarta.servlet.http.HttpSession;
@@ -89,6 +90,9 @@ public class ClientAffichageController {
 
     @Autowired
     private FraisLivraisonService fraisLivraisonService;
+
+    @Autowired
+    private RetourService retourService;
 
     @GetMapping
     public String index() {
@@ -284,31 +288,54 @@ public class ClientAffichageController {
         return "redirect:/clientAffichage/accueil?error=true";
     }
 
+    @PostMapping("/commande/retourner")
+    public String retournerArticle(@RequestParam Integer idCd, @RequestParam Integer quantite, HttpSession session) {
+        Clients loggedInClient = (Clients) session.getAttribute("loggedInClient");
+        if (loggedInClient == null) return "redirect:/clientAffichage/login";
+
+        try {
+            retourService.effectuerRetour(idCd, quantite);
+            return "redirect:/clientAffichage/commandes?returned=true";
+        } catch (Exception e) {
+            return "redirect:/clientAffichage/commandes?error=" + e.getMessage();
+        }
+    }
+
     private void updateAllRemises(List<PanierItem> panier) {
         if (panier == null || panier.isEmpty()) return;
         
         int totalQuantite = panier.stream().mapToInt(PanierItem::getQuantite).sum();
         
-        // 1. Calculer la remise globale (basée sur la quantité totale)
-        final Double remiseGlobale = remiseService.findApplicableRemise(totalQuantite)
-                .map(Remise::getRemise)
-                .orElse(0.0);
+        // 1. Règle Globale : 20% si quantité totale > 5
+        double remiseGlobale = (totalQuantite > 5) ? 20.0 : 0.0;
 
         for (PanierItem item : panier) {
-            // 2. Calculer la remise propre à la ligne (basée sur la quantité de l'article)
-            Double remiseLigne = remiseService.findApplicableRemise(item.getQuantite())
-                    .map(Remise::getRemise)
-                    .orElse(null);
-            
+            // 2. Règle de Ligne : 10% si quantité ligne > 1
+            double remiseLigne = (item.getQuantite() > 1) ? 10.0 : 0.0;
             item.setRemiseLignePourcentage(remiseLigne);
             
-            // 3. Déterminer la remise effective (la meilleure entre la ligne et la globale)
-            Double effectiveRemise = Math.max(remiseLigne != null ? remiseLigne : 0.0, remiseGlobale);
+            // 3. Calcul de la remise effective (Successive : 10% puis 20% sur le reste)
+            // On calcule le prix après remise de ligne, puis on applique la globale
+            BigDecimal prixApresLigne = item.getPrixUnitaire();
+            if (remiseLigne > 0) {
+                BigDecimal reductionLigne = item.getPrixUnitaire().multiply(new BigDecimal(remiseLigne / 100.0));
+                prixApresLigne = item.getPrixUnitaire().subtract(reductionLigne);
+            }
             
-            if (effectiveRemise > 0) {
-                item.setRemisePourcentage(effectiveRemise);
-                BigDecimal reduction = item.getPrixUnitaire().multiply(new BigDecimal(effectiveRemise / 100.0));
-                item.setPrixRemise(item.getPrixUnitaire().subtract(reduction));
+            BigDecimal prixFinal = prixApresLigne;
+            if (remiseGlobale > 0) {
+                BigDecimal reductionGlobale = prixApresLigne.multiply(new BigDecimal(remiseGlobale / 100.0));
+                prixFinal = prixApresLigne.subtract(reductionGlobale);
+            }
+            
+            // Calcul du pourcentage total équivalent pour l'affichage
+            if (prixFinal.compareTo(item.getPrixUnitaire()) < 0) {
+                BigDecimal totalEconomie = item.getPrixUnitaire().subtract(prixFinal);
+                double pourcentageTotal = totalEconomie.divide(item.getPrixUnitaire(), 4, BigDecimal.ROUND_HALF_UP)
+                                            .multiply(new BigDecimal(100)).doubleValue();
+                
+                item.setRemisePourcentage(pourcentageTotal);
+                item.setPrixRemise(prixFinal);
             } else {
                 item.setRemisePourcentage(null);
                 item.setPrixRemise(null);

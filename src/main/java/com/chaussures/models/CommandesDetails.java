@@ -33,4 +33,7 @@ public class CommandesDetails {
     @ManyToOne
     @JoinColumn(name = "id_lieu")
     private Lieu lieu;
+
+    @OneToMany(mappedBy = "commandeDetail")
+    private java.util.List<Retour> retours;
 }
