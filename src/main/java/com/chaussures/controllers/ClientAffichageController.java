@@ -41,7 +41,9 @@ import com.chaussures.services.TypeMvtStockService;
 import com.chaussures.services.LieuService;
 import com.chaussures.services.FraisLivraisonService;
 import com.chaussures.services.RetourService;
+import com.chaussures.services.EvenementsPromosService;
 import com.chaussures.models.Remise;
+import com.chaussures.models.EvenementsPromos;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -94,6 +96,26 @@ public class ClientAffichageController {
     @Autowired
     private RetourService retourService;
 
+    @Autowired
+    private EvenementsPromosService evenementsPromosService;
+
+    @PostMapping("/simuler-date")
+    public String simulerDate(@RequestParam("simulatedDate") String dateStr, HttpSession session) {
+        if (dateStr == null || dateStr.isEmpty()) {
+            session.removeAttribute("simulatedDate");
+            session.removeAttribute("simulatedDateStr");
+        } else {
+            try {
+                session.setAttribute("simulatedDate", LocalDateTime.parse(dateStr));
+                session.setAttribute("simulatedDateStr", dateStr);
+            } catch (Exception e) {
+                // En cas d'erreur de parsing, on ignore
+            }
+        }
+        String lastPage = (String) session.getAttribute("lastPage");
+        return "redirect:" + (lastPage != null ? lastPage : "/clientAffichage/accueil");
+    }
+
     @GetMapping
     public String index() {
         return "redirect:/clientAffichage/login";
@@ -127,6 +149,7 @@ public class ClientAffichageController {
             HttpSession session,
             Model model) {
         
+        session.setAttribute("lastPage", "/clientAffichage/accueil");
         Clients loggedInClient = (Clients) session.getAttribute("loggedInClient");
         if (loggedInClient == null) {
             return "redirect:/clientAffichage/login";
@@ -136,6 +159,16 @@ public class ClientAffichageController {
                 nom, categorieId, genreId, couleurId, pointureId, PageRequest.of(page, size));
 
         model.addAttribute("variantes", variantesPage.getContent());
+        
+        // Promotions actives pour la date simulée
+        LocalDateTime now = (LocalDateTime) session.getAttribute("simulatedDate");
+        if (now == null) now = LocalDateTime.now();
+        List<EvenementsPromos> activePromos = evenementsPromosService.getActivePromos(now);
+        Map<Integer, EvenementsPromos> promoMap = new HashMap<>();
+        for (EvenementsPromos promo : activePromos) {
+            promoMap.put(promo.getChaussureGenre().getId(), promo);
+        }
+        model.addAttribute("promoMap", promoMap);
         
         // Calculer le stock pour chaque variante
         Map<Integer, Integer> stocks = new HashMap<>();
@@ -170,6 +203,7 @@ public class ClientAffichageController {
 
     @GetMapping("/panier")
     public String voirPanier(HttpSession session, Model model) {
+        session.setAttribute("lastPage", "/clientAffichage/panier");
         Clients loggedInClient = (Clients) session.getAttribute("loggedInClient");
         if (loggedInClient == null) return "redirect:/clientAffichage/login";
 
@@ -185,7 +219,7 @@ public class ClientAffichageController {
                 .orElse(null);
 
         // Appliquer la remise à chaque item (en distinguant remise ligne et remise globale)
-        updateAllRemises(panier);
+        updateAllRemises(panier, session);
 
         BigDecimal total = panier.stream()
                 .map(PanierItem::getTotal)
@@ -209,6 +243,7 @@ public class ClientAffichageController {
 
     @GetMapping("/commandes")
     public String mesCommandes(HttpSession session, Model model) {
+        session.setAttribute("lastPage", "/clientAffichage/commandes");
         Clients loggedInClient = (Clients) session.getAttribute("loggedInClient");
         if (loggedInClient == null) return "redirect:/clientAffichage/login";
 
@@ -276,12 +311,13 @@ public class ClientAffichageController {
                 newItem.setPointure(variante.getPointure().getNom());
                 newItem.setQuantite(quantite);
                 newItem.setPrixUnitaire(variante.getPrixEffectif());
+                newItem.setIdChaussureGenre(variante.getChaussureGenre().getId());
                 
                 panier.add(newItem);
             }
             
             // Recalculer les remises pour tout le panier car la quantité totale a changé
-            updateAllRemises(panier);
+            updateAllRemises(panier, session);
             
             return "redirect:/clientAffichage/accueil?added=true";
         }
@@ -301,45 +337,98 @@ public class ClientAffichageController {
         }
     }
 
-    private void updateAllRemises(List<PanierItem> panier) {
+    private void updateAllRemises(List<PanierItem> panier, HttpSession session) {
         if (panier == null || panier.isEmpty()) return;
         
+        // 0. Réinitialiser les remises spéciales
+        for (PanierItem item : panier) {
+            item.setRemiseSpecialePourcentage(0.0);
+            item.setRemiseSpecialeNom(null);
+            item.setQuantiteRemiseeSpeciale(0);
+        }
+
+        // 1. Appliquer les événements promotionnels (ex: Saint Valentin)
+        LocalDateTime now = (LocalDateTime) session.getAttribute("simulatedDate");
+        if (now == null) now = LocalDateTime.now();
+        
+        List<EvenementsPromos> activePromos = evenementsPromosService.getActivePromos(now);
+        if (!activePromos.isEmpty()) {
+            // Pour la Saint Valentin : 2 articles au choix (les plus chers)
+            int articlesRestantsPromo = 2;
+            
+            // Trier les articles par prix décroissant pour favoriser le client
+            List<PanierItem> itemsTries = new ArrayList<>(panier);
+            itemsTries.sort((a, b) -> b.getPrixUnitaire().compareTo(a.getPrixUnitaire()));
+            
+            for (PanierItem item : itemsTries) {
+                if (articlesRestantsPromo <= 0) break;
+                
+                // Vérifier si cet item fait partie d'une promo active
+                for (EvenementsPromos promo : activePromos) {
+                    if (item.getIdChaussureGenre().equals(promo.getChaussureGenre().getId())) {
+                        int quantiteAAppliquer = Math.min(item.getQuantite(), articlesRestantsPromo);
+                        item.setRemiseSpecialePourcentage(promo.getRemise());
+                        item.setRemiseSpecialeNom(promo.getNom());
+                        item.setQuantiteRemiseeSpeciale(quantiteAAppliquer);
+                        articlesRestantsPromo -= quantiteAAppliquer;
+                        break;
+                    }
+                }
+            }
+        }
+
         int totalQuantite = panier.stream().mapToInt(PanierItem::getQuantite).sum();
         
-        // 1. Règle Globale : Récupérée dynamiquement depuis la base de données
+        // 2. Règle Globale : Récupérée dynamiquement depuis la base de données
         double remiseGlobale = remiseService.findApplicableRemise(totalQuantite)
                                 .map(r -> r.getRemise())
                                 .orElse(0.0);
 
         for (PanierItem item : panier) {
-            // 2. Règle de Ligne : Récupérée dynamiquement pour la quantité de la ligne
+            // 3. Règle de Ligne : Récupérée dynamiquement pour la quantité de la ligne
             double remiseLigne = remiseService.findApplicableRemise(item.getQuantite())
                                     .map(r -> r.getRemise())
                                     .orElse(0.0);
             item.setRemiseLignePourcentage(remiseLigne);
             
-            // 3. Calcul de la remise effective (Successive : 10% puis 20% sur le reste)
-            // On calcule le prix après remise de ligne, puis on applique la globale
-            BigDecimal prixApresLigne = item.getPrixUnitaire();
-            if (remiseLigne > 0) {
-                BigDecimal reductionLigne = item.getPrixUnitaire().multiply(new BigDecimal(remiseLigne / 100.0));
-                prixApresLigne = item.getPrixUnitaire().subtract(reductionLigne);
+            // 4. Calcul du prix final avec remises successives
+            // a. Remise spéciale (prioritaire sur une partie de la quantité)
+            BigDecimal totalItem = BigDecimal.ZERO;
+            int qSpeciale = item.getQuantiteRemiseeSpeciale() != null ? item.getQuantiteRemiseeSpeciale() : 0;
+            int qNormale = item.getQuantite() - qSpeciale;
+            
+            // Calcul pour la partie avec remise spéciale
+            if (qSpeciale > 0) {
+                BigDecimal prixSpeciale = item.getPrixUnitaire().multiply(new BigDecimal(1 - item.getRemiseSpecialePourcentage() / 100.0));
+                totalItem = totalItem.add(prixSpeciale.multiply(new BigDecimal(qSpeciale)));
             }
             
-            BigDecimal prixFinal = prixApresLigne;
-            if (remiseGlobale > 0) {
-                BigDecimal reductionGlobale = prixApresLigne.multiply(new BigDecimal(remiseGlobale / 100.0));
-                prixFinal = prixApresLigne.subtract(reductionGlobale);
+            // Calcul pour la partie normale (remise ligne puis globale)
+            if (qNormale > 0) {
+                BigDecimal prixApresLigne = item.getPrixUnitaire();
+                if (remiseLigne > 0) {
+                    prixApresLigne = item.getPrixUnitaire().multiply(new BigDecimal(1 - remiseLigne / 100.0));
+                }
+                
+                BigDecimal prixFinalNormale = prixApresLigne;
+                if (remiseGlobale > 0) {
+                    prixFinalNormale = prixApresLigne.multiply(new BigDecimal(1 - remiseGlobale / 100.0));
+                }
+                totalItem = totalItem.add(prixFinalNormale.multiply(new BigDecimal(qNormale)));
             }
             
-            // Calcul du pourcentage total équivalent pour l'affichage
-            if (prixFinal.compareTo(item.getPrixUnitaire()) < 0) {
-                BigDecimal totalEconomie = item.getPrixUnitaire().subtract(prixFinal);
-                double pourcentageTotal = totalEconomie.divide(item.getPrixUnitaire(), 4, BigDecimal.ROUND_HALF_UP)
+            // Prix moyen après toutes les remises pour cet item
+            BigDecimal prixMoyenFinal = totalItem.divide(new BigDecimal(item.getQuantite()), 2, BigDecimal.ROUND_HALF_UP);
+            
+            // Calcul du pourcentage total d'économie
+            BigDecimal totalSansRemise = item.getPrixUnitaire().multiply(new BigDecimal(item.getQuantite()));
+            if (totalItem.compareTo(totalSansRemise) < 0) {
+                BigDecimal economie = totalSansRemise.subtract(totalItem);
+                double pourcentageTotal = economie.divide(totalSansRemise, 4, BigDecimal.ROUND_HALF_UP)
                                             .multiply(new BigDecimal(100)).doubleValue();
                 
                 item.setRemisePourcentage(pourcentageTotal);
-                item.setPrixRemise(prixFinal);
+                item.setPrixRemise(prixMoyenFinal);
             } else {
                 item.setRemisePourcentage(null);
                 item.setPrixRemise(null);
@@ -353,7 +442,7 @@ public class ClientAffichageController {
         if (panier != null) {
             panier.removeIf(item -> item.getVarianteId().equals(varianteId));
             // Recalculer les remises après suppression
-            updateAllRemises(panier);
+            updateAllRemises(panier, session);
         }
         return "redirect:/clientAffichage/panier";
     }
@@ -387,7 +476,11 @@ public class ClientAffichageController {
         // Créer la commande
         Commandes commande = new Commandes();
         commande.setClient(loggedInClient);
-        commande.setDateCommande(LocalDateTime.now());
+        
+        // Utiliser la date simulée si présente
+        LocalDateTime now = (LocalDateTime) session.getAttribute("simulatedDate");
+        if (now == null) now = LocalDateTime.now();
+        commande.setDateCommande(now);
         
         commande = commandesService.save(commande);
 
@@ -413,7 +506,7 @@ public class ClientAffichageController {
                 mvtStock.setChaussuresCouleurPointure(variante);
                 mvtStock.setTypeMvtStock(typeSortie);
                 mvtStock.setQuantite(-item.getQuantite()); // Quantité négative pour une sortie
-                mvtStock.setDateMvt(LocalDateTime.now());
+                mvtStock.setDateMvt(now);
                 stockService.save(mvtStock);
             }
         }

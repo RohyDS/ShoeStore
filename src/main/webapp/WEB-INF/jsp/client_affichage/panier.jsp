@@ -33,6 +33,17 @@
                     </div>
                 </div>
                 <div class="flex items-center gap-4">
+                    <!-- Simulation de date -->
+                    <form action="/clientAffichage/simuler-date" method="POST" class="hidden lg:flex items-center gap-2">
+                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Simulation Date:</label>
+                        <input type="datetime-local" name="simulatedDate" 
+                               value="${sessionScope.simulatedDateStr}" 
+                               class="px-2 py-1 border border-gray-200 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 outline-none bg-gray-50">
+                        <button type="submit" class="px-3 py-1 bg-gray-800 text-white rounded-lg text-xs font-bold hover:bg-black transition-colors">
+                            OK
+                        </button>
+                    </form>
+
                     <span class="text-sm text-gray-600 font-medium">Bonjour, ${client.nom}</span>
                     <a href="/clientAffichage/logout" class="text-sm text-red-600 hover:text-red-700 font-semibold px-3 py-1.5 rounded-md hover:bg-red-50 transition-all">Déconnexion</a>
                 </div>
@@ -109,6 +120,16 @@
                                     </div>
                                     <div class="flex justify-between items-end mt-4 pt-4 border-t border-gray-50">
                                         <div class="space-y-1">
+                                            <c:if test="${item.quantiteRemiseeSpeciale > 0}">
+                                                <div class="bg-red-50 border border-red-100 rounded-lg p-2 mb-2">
+                                                    <div class="flex items-center text-[10px]">
+                                                        <svg class="h-3 w-3 text-red-600 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                                        </svg>
+                                                        <span class="text-red-800 font-bold uppercase tracking-wider">${item.remiseSpecialeNom} : -${item.remiseSpecialePourcentage}% sur ${item.quantiteRemiseeSpeciale} article(s) !</span>
+                                                    </div>
+                                                </div>
+                                            </c:if>
                                             <div class="text-sm">
                                                 <span class="text-gray-500">Prix:</span>
                                                 <c:if test="${item.remiseLignePourcentage != null}">

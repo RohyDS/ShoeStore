@@ -1,6 +1,7 @@
 -- Script SQL pour PostgreSQL généré à partir de base.txt
 
 -- Réinitialisation de la base de données
+DROP TABLE IF EXISTS evenements_promos CASCADE;
 DROP TABLE IF EXISTS retours CASCADE;
 DROP TABLE IF EXISTS remise CASCADE;
 DROP TABLE IF EXISTS commandes_details CASCADE;
@@ -175,6 +176,16 @@ CREATE TABLE IF NOT EXISTS remise (
     quantite INT NOT NULL,
     remise NUMERIC(5, 2) NOT NULL,
     date_remise TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Table EVENEMENTS_PROMOS
+CREATE TABLE IF NOT EXISTS evenements_promos (
+    id SERIAL PRIMARY KEY,
+    nom VARCHAR(255) NOT NULL,
+    id_chaussure_genre INT REFERENCES chaussures_genres(id_chaussure_genre),
+    remise NUMERIC(5, 2) NOT NULL,
+    date_debut TIMESTAMP NOT NULL,
+    date_fin TIMESTAMP NOT NULL
 );
 
 -- Table RETOURS

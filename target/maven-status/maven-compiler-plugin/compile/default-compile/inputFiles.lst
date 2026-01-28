@@ -14,6 +14,7 @@ W:\ITU\S5\Rohy\ShoeStore\src\main\java\com\chaussures\controllers\HomeController
 W:\ITU\S5\Rohy\ShoeStore\src\main\java\com\chaussures\controllers\LieuController.java
 W:\ITU\S5\Rohy\ShoeStore\src\main\java\com\chaussures\controllers\MarqueController.java
 W:\ITU\S5\Rohy\ShoeStore\src\main\java\com\chaussures\controllers\PointureController.java
+W:\ITU\S5\Rohy\ShoeStore\src\main\java\com\chaussures\controllers\PromotionController.java
 W:\ITU\S5\Rohy\ShoeStore\src\main\java\com\chaussures\controllers\RemiseController.java
 W:\ITU\S5\Rohy\ShoeStore\src\main\java\com\chaussures\controllers\StockController.java
 W:\ITU\S5\Rohy\ShoeStore\src\main\java\com\chaussures\models\Categories.java
@@ -25,6 +26,7 @@ W:\ITU\S5\Rohy\ShoeStore\src\main\java\com\chaussures\models\Commandes.java
 W:\ITU\S5\Rohy\ShoeStore\src\main\java\com\chaussures\models\CommandesDetails.java
 W:\ITU\S5\Rohy\ShoeStore\src\main\java\com\chaussures\models\Couleur.java
 W:\ITU\S5\Rohy\ShoeStore\src\main\java\com\chaussures\models\Coupe.java
+W:\ITU\S5\Rohy\ShoeStore\src\main\java\com\chaussures\models\EvenementsPromos.java
 W:\ITU\S5\Rohy\ShoeStore\src\main\java\com\chaussures\models\FraisLivraison.java
 W:\ITU\S5\Rohy\ShoeStore\src\main\java\com\chaussures\models\FraisLivraisonId.java
 W:\ITU\S5\Rohy\ShoeStore\src\main\java\com\chaussures\models\Genre.java
@@ -48,6 +50,7 @@ W:\ITU\S5\Rohy\ShoeStore\src\main\java\com\chaussures\repositories\CommandesDeta
 W:\ITU\S5\Rohy\ShoeStore\src\main\java\com\chaussures\repositories\CommandesRepository.java
 W:\ITU\S5\Rohy\ShoeStore\src\main\java\com\chaussures\repositories\CouleurRepository.java
 W:\ITU\S5\Rohy\ShoeStore\src\main\java\com\chaussures\repositories\CoupeRepository.java
+W:\ITU\S5\Rohy\ShoeStore\src\main\java\com\chaussures\repositories\EvenementsPromosRepository.java
 W:\ITU\S5\Rohy\ShoeStore\src\main\java\com\chaussures\repositories\FraisLivraisonRepository.java
 W:\ITU\S5\Rohy\ShoeStore\src\main\java\com\chaussures\repositories\GenreRepository.java
 W:\ITU\S5\Rohy\ShoeStore\src\main\java\com\chaussures\repositories\LieuRepository.java
@@ -69,6 +72,7 @@ W:\ITU\S5\Rohy\ShoeStore\src\main\java\com\chaussures\services\CommandesDetailsS
 W:\ITU\S5\Rohy\ShoeStore\src\main\java\com\chaussures\services\CommandesService.java
 W:\ITU\S5\Rohy\ShoeStore\src\main\java\com\chaussures\services\CouleurService.java
 W:\ITU\S5\Rohy\ShoeStore\src\main\java\com\chaussures\services\CoupeService.java
+W:\ITU\S5\Rohy\ShoeStore\src\main\java\com\chaussures\services\EvenementsPromosService.java
 W:\ITU\S5\Rohy\ShoeStore\src\main\java\com\chaussures\services\FraisLivraisonService.java
 W:\ITU\S5\Rohy\ShoeStore\src\main\java\com\chaussures\services\GenreService.java
 W:\ITU\S5\Rohy\ShoeStore\src\main\java\com\chaussures\services\LieuService.java

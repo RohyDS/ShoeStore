@@ -22,6 +22,10 @@ public class PanierItem {
     private BigDecimal prixRemise;    // Prix après remise effective
     private Double remiseLignePourcentage; // Remise basée uniquement sur la quantité de cet article
     private Integer lieuId; // ID du lieu de livraison pour cet article
+    private Integer idChaussureGenre;
+    private Double remiseSpecialePourcentage;
+    private String remiseSpecialeNom;
+    private Integer quantiteRemiseeSpeciale; // Combien d'unités de cet item ont la remise spéciale
 
     public BigDecimal getTotal() {
         return (prixRemise != null ? prixRemise : prixUnitaire).multiply(new BigDecimal(quantite));

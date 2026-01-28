@@ -48,6 +48,17 @@
                 </div>
                 
                 <div class="flex items-center gap-6">
+                    <!-- Simulation de date -->
+                    <form action="/clientAffichage/simuler-date" method="POST" class="hidden lg:flex items-center gap-2">
+                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Simulation Date:</label>
+                        <input type="datetime-local" name="simulatedDate" 
+                               value="${sessionScope.simulatedDateStr}" 
+                               class="px-2 py-1 border border-gray-200 rounded-lg text-xs focus:ring-2 focus:ring-brand-500 outline-none bg-gray-50">
+                        <button type="submit" class="px-3 py-1 bg-gray-800 text-white rounded-lg text-xs font-bold hover:bg-black transition-colors">
+                            OK
+                        </button>
+                    </form>
+
                     <div class="hidden md:flex items-center gap-2 text-sm">
                         <span class="text-gray-500">Bienvenue,</span>
                         <span class="font-bold text-gray-900">${client.nom}</span>
@@ -189,6 +200,14 @@
                                 ${v.chaussureGenre.chaussure.marque.nom}
                             </span>
                         </div>
+                        <c:if test="${promoMap[v.chaussureGenre.id] != null}">
+                            <div class="absolute top-4 right-4">
+                                <div class="bg-red-500 text-white px-3 py-1.5 rounded-xl text-xs font-black shadow-lg shadow-red-500/30 flex flex-col items-center">
+                                    <span class="text-[10px] uppercase leading-none mb-1">${promoMap[v.chaussureGenre.id].nom}</span>
+                                    <span class="text-sm">-${promoMap[v.chaussureGenre.id].remise}%</span>
+                                </div>
+                            </div>
+                        </c:if>
                     </div>
                     
                     <div class="p-5 flex-1 flex flex-col">
@@ -205,7 +224,21 @@
                         <div class="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between gap-4">
                             <div class="flex flex-col">
                                 <div class="text-2xl font-black text-brand-600">
-                                    <fmt:formatNumber value="${v.prixEffectif}" pattern="#,##0.00" /> Ar
+                                    <c:choose>
+                                        <c:when test="${promoMap[v.chaussureGenre.id] != null}">
+                                            <div class="flex flex-col">
+                                                <span class="text-xs text-gray-400 line-through font-medium">
+                                                    <fmt:formatNumber value="${v.prixEffectif}" pattern="#,##0.00" /> Ar
+                                                </span>
+                                                <span class="text-red-600">
+                                                    <fmt:formatNumber value="${v.prixEffectif * (1 - promoMap[v.chaussureGenre.id].remise / 100.0)}" pattern="#,##0.00" /> Ar
+                                                </span>
+                                            </div>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <fmt:formatNumber value="${v.prixEffectif}" pattern="#,##0.00" /> Ar
+                                        </c:otherwise>
+                                    </c:choose>
                                 </div>
                                 <div class="text-xs font-medium ${stocks[v.id] > 0 ? 'text-green-600' : 'text-red-600'}">
                                     Stock: ${stocks[v.id]} disponible

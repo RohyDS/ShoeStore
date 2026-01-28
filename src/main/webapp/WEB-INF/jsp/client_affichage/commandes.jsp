@@ -33,6 +33,17 @@
                     </div>
                 </div>
                 <div class="flex items-center gap-4">
+                    <!-- Simulation de date -->
+                    <form action="/clientAffichage/simuler-date" method="POST" class="hidden lg:flex items-center gap-2">
+                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Simulation Date:</label>
+                        <input type="datetime-local" name="simulatedDate" 
+                               value="${sessionScope.simulatedDateStr}" 
+                               class="px-2 py-1 border border-gray-200 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 outline-none bg-gray-50">
+                        <button type="submit" class="px-3 py-1 bg-gray-800 text-white rounded-lg text-xs font-bold hover:bg-black transition-colors">
+                            OK
+                        </button>
+                    </form>
+
                     <a href="/clientAffichage/panier" class="relative group p-2 rounded-xl hover:bg-gray-100 transition-all">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-gray-600 group-hover:text-indigo-600">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
